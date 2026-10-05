@@ -1,0 +1,162 @@
+.app {
+  position: relative;
+  max-width: var(--ancho-app);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--offwhite);
+}
+
+/* En pantallas grandes la app se ve como un celular apoyado sobre celeste. */
+@media (min-width: 600px) {
+  html body {
+    background: var(--celeste);
+  }
+
+  .app {
+    box-shadow: 0 0 0 1px var(--borde);
+  }
+}
+
+.skip:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  width: auto;
+  height: auto;
+  clip: auto;
+  padding: 8px 12px;
+  background: var(--verde);
+  color: var(--offwhite);
+}
+
+/* Figma: padding 64 / 24 / 32, separación 16–24 */
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 64px var(--margen) 32px;
+}
+
+.screen--nav {
+  padding-bottom: 112px;
+}
+
+/* Espacio flexible: empuja lo que sigue hacia abajo. */
+.grow {
+  flex: 1;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: min(calc(100% - 2 * var(--margen)), calc(var(--ancho-app) - 2 * var(--margen)));
+  padding: 8px;
+  border-radius: var(--radio-pildora);
+  background: var(--verde);
+  transform: translateX(-50%);
+}
+
+.bottom-nav__item {
+  position: relative;
+  z-index: 1;
+  padding: 10px 12px;
+  border-radius: var(--radio-pildora);
+  color: var(--offwhite);
+  text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+
+.bottom-nav__item[aria-current='page'] {
+  color: var(--verde);
+}
+
+/* Píldora celeste que se desliza hasta la sección activa. */
+.bottom-nav__pill {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  border-radius: var(--radio-pildora);
+  background: var(--celeste);
+}
+
+.bottom-nav__pill.is-ready {
+  transition:
+    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* La pantalla nueva entra desde el lado hacia el que se movió la barra. */
+.screen--from-right {
+  animation: screen-from-right 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.screen--from-left {
+  animation: screen-from-left 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes screen-from-right {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+}
+
+@keyframes screen-from-left {
+  from {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+}
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background: rgb(46 42 8 / 0.5);
+  animation: sheet-fade 0.2s var(--ease);
+}
+
+.sheet__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: var(--ancho-app);
+  max-height: 92dvh;
+  overflow: auto;
+  padding: 28px var(--margen) calc(32px + env(safe-area-inset-bottom));
+  border-radius: var(--radio-grande) var(--radio-grande) 0 0;
+  background: var(--offwhite);
+  animation: sheet-up 0.28s var(--ease);
+}
+
+.sheet__panel:focus {
+  outline: none;
+}
+
+@keyframes sheet-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}

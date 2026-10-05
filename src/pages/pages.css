@@ -1,0 +1,323 @@
+/* Piezas que se repiten entre pantallas. Medidas de los frames de celular de Figma. */
+
+.logo {
+  width: 120px;
+  height: 120px;
+}
+
+.stack-10 {
+  display: grid;
+  gap: 10px;
+}
+
+.stack-12 {
+  display: grid;
+  gap: 12px;
+}
+
+.stack-16 {
+  display: grid;
+  gap: 16px;
+}
+
+.row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-screen--20 {
+  gap: 20px;
+}
+
+.drawing--grow {
+  flex: 1;
+  align-items: center;
+  min-height: 0;
+}
+
+.demo-hint {
+  margin-top: -4px;
+}
+
+.link-button {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--verde);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.link-button--error {
+  color: var(--error);
+}
+
+/* ---------- Tarjetas y listas ---------- */
+
+.card {
+  display: block;
+  padding: 18px 20px;
+  border-radius: var(--radio-grande);
+  color: var(--verde);
+  text-decoration: none;
+}
+
+.card--celeste {
+  background: var(--celeste);
+}
+
+.card--blanco {
+  background: var(--blanco);
+}
+
+.list {
+  padding-block: 4px;
+}
+
+.list__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 16px;
+}
+
+.list__row + .list__row {
+  border-top: 1px solid var(--borde);
+}
+
+.card--celeste .list__row + .list__row {
+  border-top-color: rgb(99 91 17 / 0.15);
+}
+
+.list__text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.list__text .link-button {
+  margin-top: 4px;
+}
+
+/* ---------- Inicio ---------- */
+
+.next-turn {
+  display: grid;
+  gap: 6px;
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.shortcut {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 112px;
+  padding: 18px;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+  color: var(--verde);
+  text-decoration: none;
+  transition: background-color 0.2s var(--ease);
+}
+
+.shortcut:hover {
+  background: var(--celeste);
+}
+
+/* ---------- Turnos ---------- */
+
+.group {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.group legend {
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.days {
+  display: flex;
+  gap: 8px;
+}
+
+.day {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  width: 56px;
+  height: 72px;
+  border: 0;
+  border-radius: var(--radio-mediano);
+  background: var(--blanco);
+  color: var(--verde);
+  cursor: pointer;
+}
+
+.day .mono-etiqueta {
+  color: var(--texto-suave);
+}
+
+.day[aria-pressed='true'] {
+  background: var(--verde);
+  color: var(--offwhite);
+}
+
+.day[aria-pressed='true'] .mono-etiqueta {
+  color: var(--celeste);
+}
+
+.center {
+  text-align: center;
+}
+
+.center .card {
+  text-align: left;
+}
+
+/* Estados vacíos */
+.empty__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+/* ---------- Mascotas ---------- */
+
+.pet-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--radio-grande);
+  background: var(--celeste);
+  color: var(--verde);
+  text-decoration: none;
+}
+
+.pet-row__pic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: var(--radio-mediano);
+  background: var(--blanco);
+}
+
+.pet-row__text {
+  display: grid;
+  gap: 4px;
+}
+
+.pet-hero {
+  display: grid;
+  place-items: center;
+  height: 270px;
+}
+
+.facts {
+  display: flex;
+  gap: 16px;
+}
+
+.facts > div {
+  flex: 1;
+  display: grid;
+  gap: 4px;
+}
+
+/* ---------- Tienda y compras ---------- */
+
+.products__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 14px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.products__row > .texto-fuerte {
+  flex: 1;
+}
+
+.qty {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 12px;
+  border-block: 1px solid var(--borde);
+}
+
+.qty__control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qty__btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1.5px solid var(--verde);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--verde);
+  cursor: pointer;
+}
+
+.qty__btn:disabled {
+  border-color: var(--borde);
+  color: var(--borde);
+  cursor: not-allowed;
+}
+
+.qty__input {
+  width: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: center;
+}
+
+.qty__input--error {
+  color: var(--error);
+}

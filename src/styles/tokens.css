@@ -1,0 +1,88 @@
+/* Variables del sistema de diseño de Figma (página "Sistema de diseño"). */
+
+@font-face {
+  font-family: 'Sofia Sans Extra Condensed';
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/sofia-sans-extra-condensed-latin-900-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Sofia Sans';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/sofia-sans-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Sofia Sans';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/sofia-sans-latin-600-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/dm-mono-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/dm-mono-latin-500-normal.woff2') format('woff2');
+}
+
+:root {
+  /* Color · Marca */
+  --verde: #635b11;
+  --celeste: #d7ebf9;
+  --offwhite: #f8efea;
+  --salmon: #ffc4b6;
+  /* Color · Neutros */
+  --verde-oscuro: #4a440c;
+  --texto-suave: #6e6a4e;
+  --borde: #e4d8cc;
+  --blanco: #ffffff;
+  /* Color · Estados */
+  --exito: #2f6a3a;
+  --exito-fondo: #e2efdf;
+  --alerta: #8a5208;
+  --alerta-fondo: #fbebd3;
+  --error: #9a3b2e;
+  --error-fondo: #f9deda;
+
+  /* Tipografías */
+  --display: 'Sofia Sans Extra Condensed', 'Arial Narrow', sans-serif;
+  --frase: 'Instrument Serif', Georgia, serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+  --texto: 'Sofia Sans', system-ui, sans-serif;
+
+  /* Radios */
+  --radio-chico: 8px;
+  --radio-mediano: 16px;
+  --radio-grande: 28px;
+  --radio-pildora: 999px;
+
+  /* Medidas de celular (Figma 390): margen lateral 24 */
+  --margen: 24px;
+  --ancho-app: 430px;
+  --ease: cubic-bezier(0.3, 0, 0.2, 1);
+}
