@@ -43,13 +43,14 @@ export function VetClientes() {
       <Table
         caption="Clientes"
         empty={`No hay clientes que coincidan con "${q}".`}
-        columns={[{ label: 'N.º', width: '10%' }, { label: 'Nombre y apellido', width: '34%' }, { label: 'DNI', width: '20%' }, { label: 'Mascotas', width: '14%' }, { label: '', align: 'right' }]}
+        columns={[{ label: 'N.º', width: '8%' }, { label: 'Nombre y apellido', width: '26%' }, { label: 'DNI', width: '15%' }, { label: 'Celular', width: '19%' }, { label: 'Mascotas', width: '11%' }, { label: '', align: 'right' }]}
         rows={lista.map((c) => ({
           key: c.id,
           cells: [
             <span className="cell-mono">{c.id}</span>,
             <span className="cell-strong">{c.nombre}</span>,
             dniFmt(c.dni),
+            <span className="cell-mono">{c.telefono}</span>,
             <Link to={`/vet/mascotas?cliente=${c.id}`}>{mascotasDe(c.id).length}</Link>,
             <RowActions
               actions={[
@@ -105,6 +106,7 @@ function ClienteForm({ cliente, onClose, onSaved }: { cliente?: Cliente; onClose
   const { clientes, addCliente, editCliente } = useStore();
   const [nombre, setNombre] = useState(cliente?.nombre ?? '');
   const [dni, setDni] = useState(cliente?.dni ?? '');
+  const [telefono, setTelefono] = useState(cliente?.telefono ?? '');
   const [conMascota, setConMascota] = useState(!cliente);
   const [enviado, setEnviado] = useState(false);
 
@@ -112,13 +114,14 @@ function ClienteForm({ cliente, onClose, onSaved }: { cliente?: Cliente; onClose
   const errores = {
     nombre: !nombre.trim() ? 'Escribí nombre y apellido.' : undefined,
     dni: !/^\d{7,8}$/.test(dni) ? 'El DNI tiene 7 u 8 números.' : clientes.some((c) => c.dni === dni && c.id !== cliente?.id) ? 'Ya hay un cliente con ese DNI.' : undefined,
+    telefono: telefono.replace(/\D/g, '').length !== 10 ? 'Con característica y sin 0 ni 15: 10 números, como 249 455-1820.' : undefined,
   };
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     setEnviado(true);
-    if (errores.nombre || errores.dni) return;
-    const data = { nombre: nombre.trim(), dni };
+    if (errores.nombre || errores.dni || errores.telefono) return;
+    const data = { nombre: nombre.trim(), dni, telefono: telefono.trim() };
     if (cliente) {
       editCliente(cliente.id, data);
       onSaved(cliente.id, data.nombre, false);
@@ -132,6 +135,8 @@ function ClienteForm({ cliente, onClose, onSaved }: { cliente?: Cliente; onClose
       <form onSubmit={submit} noValidate>
         <Field label="Nombre y apellido" placeholder="Ej.: Marta Gómez" value={nombre} onChange={(e) => setNombre(e.target.value)} error={enviado ? errores.nombre : undefined} />
         <Field label="DNI" inputMode="numeric" placeholder="Ej.: 30456789" value={dni} onChange={(e) => setDni(e.target.value.replace(/\D/g, '').slice(0, 8))} error={enviado ? errores.dni : undefined} />
+        <Field label="Celular" type="tel" inputMode="tel" placeholder="Ej.: 249 455-1820" value={telefono} onChange={(e) => setTelefono(e.target.value.replace(/[^\d\s-]/g, ''))} error={enviado ? errores.telefono : undefined} />
+        <p className="texto-chico suave">Para los avisos por WhatsApp: turnos, vacunas y lista de espera.</p>
         {cliente ? (
           <p className="texto-chico suave">Lo que no cambies queda como está.</p>
         ) : (

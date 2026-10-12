@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { img } from '../lib/format';
-import { useStore } from '../lib/store';
+import { useStore, type Permiso } from '../lib/store';
+import { Icon, type IconName } from './icons';
+import { VetBuscador } from './VetBuscador';
 import { Notice } from './ui';
 import './vet.css';
 
-/* Vista del veterinario: escritorio (Figma 1440) con menú lateral verde. */
+/* Vista del veterinario: escritorio (Figma 1440) con menú lateral verde bosque. */
 
-const SECCIONES = [
-  { label: 'Turnos', to: '/vet/turnos' },
-  { label: 'Clientes', to: '/vet/clientes' },
-  { label: 'Mascotas', to: '/vet/mascotas' },
-  { label: 'Productos', to: '/vet/productos' },
+const SECCIONES: { label: string; to: string; icon: IconName; permiso?: Permiso }[] = [
+  { label: 'Agenda', to: '/vet/turnos', icon: 'turnos' },
+  { label: 'Clientes', to: '/vet/clientes', icon: 'clientes' },
+  { label: 'Mascotas', to: '/vet/mascotas', icon: 'mascotas' },
+  { label: 'Productos', to: '/vet/productos', icon: 'productos' },
+  { label: 'Caja', to: '/vet/caja', icon: 'caja' },
+  { label: 'Resumen', to: '/vet/resumen', icon: 'resumen', permiso: 'resumen' },
 ];
 
 export function VetLayout() {
@@ -29,9 +33,9 @@ export function VetLayout() {
   );
 }
 
-/** Pantalla con menú lateral. Sin veterinario ingresado vuelve al ingreso. */
-export function VetScreen({ children, label }: { children: ReactNode; label: string }) {
-  const { vet, logoutVet } = useStore();
+/** Pantalla con menú lateral. Sin nadie del equipo ingresado vuelve al ingreso; sin permiso, lo dice. */
+export function VetScreen({ children, label, permiso }: { children: ReactNode; label: string; permiso?: Permiso }) {
+  const { vet, logoutVet, puede } = useStore();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
@@ -42,10 +46,14 @@ export function VetScreen({ children, label }: { children: ReactNode; label: str
   return (
     <div className="vet-shell">
       <aside className="vet-side">
-        <img className="vet-side__logo" src={img('logo-celeste')} alt="Veterinaria Patitas amigas" width={100} height={100} />
-        <nav className="vet-side__nav" aria-label="Secciones">
-          {SECCIONES.map((s) => (
-            <Link key={s.to} to={s.to} className="vet-side__item mono-boton" aria-current={pathname.startsWith(s.to) ? 'page' : undefined}>
+        <img className="vet-side__logo" src={img('logo-salvia')} alt="Veterinaria Patitas amigas" width={100} height={100} />
+        {/* En escritorio es el menú lateral; en el celular pasa a una barra fija abajo. */}
+        <nav className="vet-side__nav" aria-label="Menú principal">
+          {SECCIONES.filter((s) => !s.permiso || puede(s.permiso)).map((s) => (
+            <Link key={s.to} to={s.to} className="vet-side__item" aria-current={pathname.startsWith(s.to) ? 'page' : undefined}>
+              <span className="vet-side__icon">
+                <Icon name={s.icon} />
+              </span>
               {s.label}
             </Link>
           ))}
@@ -53,13 +61,25 @@ export function VetScreen({ children, label }: { children: ReactNode; label: str
         <div className="vet-side__session">
           <p className="texto-fuerte">{vet.nombre}</p>
           <p className="texto-chico">{vet.especialidad}</p>
-          <button type="button" className="mono-etiqueta" onClick={logoutVet}>
+          <button type="button" className="vet-side__salir mono-etiqueta" onClick={logoutVet}>
             Salir
           </button>
         </div>
       </aside>
       <main id="contenido" className="vet-main" aria-label={label}>
-        {children}
+        <div className="vet-top">
+          <VetBuscador />
+        </div>
+        {permiso && !puede(permiso) ? (
+          <>
+            <h1 className="display-l">{label}</h1>
+            <Notice tipo="alerta" titulo="Esta sección es solo para veterinarios">
+              Ingresaste como {vet.especialidad.toLowerCase()}. Si necesitás verla, pedíselo a un veterinario.
+            </Notice>
+          </>
+        ) : (
+          children
+        )}
       </main>
     </div>
   );
@@ -109,7 +129,7 @@ export function Table({ columns, rows, caption, empty }: { columns: Column[]; ro
             rows.map((r) => (
               <tr key={r.key}>
                 {r.cells.map((cell, i) => (
-                  <td key={i} className={columns[i]?.align ? 'is-right' : undefined}>
+                  <td key={i} className={columns[i]?.align ? 'is-right' : undefined} data-label={columns[i]?.label || undefined}>
                     {cell}
                   </td>
                 ))}
@@ -128,17 +148,31 @@ export function Table({ columns, rows, caption, empty }: { columns: Column[]; ro
   );
 }
 
-/** Acciones en texto de las filas (Editar · Eliminar). */
-export function RowActions({ actions }: { actions: { label: string; onClick: () => void; danger?: boolean; to?: string }[] }) {
+/** Acciones en texto de las filas (Editar · Eliminar). Con `href` abre afuera (WhatsApp) en otra pestaña. */
+export interface RowAction {
+  label: string;
+  onClick?: () => void;
+  danger?: boolean;
+  to?: string;
+  href?: string;
+  title?: string;
+}
+
+export function RowActions({ actions }: { actions: RowAction[] }) {
   return (
     <span className="row-actions">
       {actions.map((a) =>
-        a.to ? (
+        a.href ? (
+          <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer" className="mono-etiqueta" title={a.title} onClick={a.onClick}>
+            {a.label}
+            <span className="sr-only"> (se abre en otra pestaña)</span>
+          </a>
+        ) : a.to ? (
           <Link key={a.label} to={a.to} className="mono-etiqueta">
             {a.label}
           </Link>
         ) : (
-          <button key={a.label} type="button" className={`mono-etiqueta${a.danger ? ' is-danger' : ''}`} onClick={a.onClick}>
+          <button key={a.label} type="button" className={`mono-etiqueta${a.danger ? ' is-danger' : ''}`} onClick={a.onClick} title={a.title}>
             {a.label}
           </button>
         ),
