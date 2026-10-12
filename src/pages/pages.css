@@ -59,7 +59,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--verde);
+  color: var(--bosque);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
@@ -75,12 +75,12 @@
   display: block;
   padding: 18px 20px;
   border-radius: var(--radio-grande);
-  color: var(--verde);
+  color: var(--bosque);
   text-decoration: none;
 }
 
-.card--celeste {
-  background: var(--celeste);
+.card--salvia {
+  background: var(--salvia);
 }
 
 .card--blanco {
@@ -102,8 +102,8 @@
   border-top: 1px solid var(--borde);
 }
 
-.card--celeste .list__row + .list__row {
-  border-top-color: rgb(99 91 17 / 0.15);
+.card--salvia .list__row + .list__row {
+  border-top-color: rgb(31 58 46 / 0.15);
 }
 
 .list__text {
@@ -138,13 +138,13 @@
   padding: 18px;
   border-radius: var(--radio-grande);
   background: var(--blanco);
-  color: var(--verde);
+  color: var(--bosque);
   text-decoration: none;
   transition: background-color 0.2s var(--ease);
 }
 
 .shortcut:hover {
-  background: var(--celeste);
+  background: var(--salvia);
 }
 
 /* ---------- Turnos ---------- */
@@ -183,7 +183,7 @@
   border: 0;
   border-radius: var(--radio-mediano);
   background: var(--blanco);
-  color: var(--verde);
+  color: var(--bosque);
   cursor: pointer;
 }
 
@@ -192,12 +192,12 @@
 }
 
 .day[aria-pressed='true'] {
-  background: var(--verde);
-  color: var(--offwhite);
+  background: var(--bosque);
+  color: var(--beige);
 }
 
 .day[aria-pressed='true'] .mono-etiqueta {
-  color: var(--celeste);
+  color: var(--salvia);
 }
 
 .center {
@@ -226,8 +226,8 @@
   gap: 16px;
   padding: 16px 20px;
   border-radius: var(--radio-grande);
-  background: var(--celeste);
-  color: var(--verde);
+  background: var(--salvia);
+  color: var(--bosque);
   text-decoration: none;
 }
 
@@ -297,10 +297,10 @@
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1.5px solid var(--verde);
+  border: 1.5px solid var(--bosque);
   border-radius: 50%;
   background: transparent;
-  color: var(--verde);
+  color: var(--bosque);
   cursor: pointer;
 }
 
@@ -320,4 +320,107 @@
 
 .qty__input--error {
   color: var(--error);
+}
+
+.day:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.list__actions {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.list__actions .link-button {
+  min-height: 32px;
+}
+
+/* ---------- Pedir turno: día lleno ---------- */
+
+.day {
+  position: relative;
+}
+
+.day--lleno {
+  opacity: 0.7;
+}
+
+.day__lleno {
+  font-size: 10px;
+}
+
+/* ---------- Medicación en casa ---------- */
+
+.meds {
+  display: grid;
+  gap: 12px;
+}
+
+.meds__lista {
+  display: grid;
+  gap: 4px;
+}
+
+.toma {
+  align-items: center;
+  min-height: 44px;
+}
+
+.tratamiento {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tratamiento__barra {
+  height: 6px;
+  border-radius: var(--radio-pildora);
+  background: var(--beige);
+  overflow: hidden;
+}
+
+.tratamiento__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--bosque);
+}
+
+/* ---------- Recordatorios por WhatsApp ---------- */
+
+.wa {
+  display: grid;
+  gap: 16px;
+}
+
+.wa__burbuja {
+  display: grid;
+  gap: 4px;
+  max-width: 300px;
+  padding: 12px 14px;
+  border-radius: 4px 16px 16px 16px;
+  background: var(--beige);
+}
+
+/* ---------- Pago (demo de Mercado Pago) ---------- */
+
+.pago-demo {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border-radius: var(--radio-mediano);
+  background: var(--blanco);
+  box-shadow: inset 0 0 0 1.2px var(--borde);
+}
+
+.pago-demo__espera {
+  padding: 16px 0;
+  text-align: center;
+}
+
+.pago-demo__volver {
+  justify-self: center;
+  min-height: 44px;
 }

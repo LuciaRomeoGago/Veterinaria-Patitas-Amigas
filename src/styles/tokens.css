@@ -51,23 +51,24 @@
 }
 
 :root {
-  /* Color · Marca */
-  --verde: #635b11;
-  --celeste: #d7ebf9;
-  --offwhite: #f8efea;
-  --salmon: #ffc4b6;
+  /* Color · Marca (paleta 5 con rosa) */
+  --bosque: #1f3a2e; /* primario: texto, botones, menú */
+  --salvia: #8fa382; /* secundario: tarjetas destacadas, sección activa */
+  --beige: #f2ebdf; /* fondo */
+  --rosa: #edb1a6; /* acento */
   /* Color · Neutros */
-  --verde-oscuro: #4a440c;
-  --texto-suave: #6e6a4e;
-  --borde: #e4d8cc;
+  --bosque-oscuro: #172c22; /* texto sobre salvia */
+  --texto-suave: #56645a;
+  --borde: #d6ccbb;
   --blanco: #ffffff;
   /* Color · Estados */
   --exito: #2f6a3a;
   --exito-fondo: #e2efdf;
-  --alerta: #8a5208;
-  --alerta-fondo: #fbebd3;
+  --alerta: #7a4806;
+  --alerta-fondo: #e4d498;
   --error: #9a3b2e;
   --error-fondo: #f9deda;
+  --error-sobre-salvia: #5c1d16; /* el rojo de error no llega a 4,5:1 sobre salvia */
 
   /* Tipografías */
   --display: 'Sofia Sans Extra Condensed', 'Arial Narrow', sans-serif;

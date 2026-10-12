@@ -23,32 +23,32 @@
 }
 
 .btn--primario {
-  background: var(--verde);
-  color: var(--offwhite);
+  background: var(--bosque);
+  color: var(--beige);
 }
 
 .btn--primario:hover {
-  background: var(--verde-oscuro);
+  background: var(--bosque-oscuro);
 }
 
 .btn--secundario {
-  border-color: var(--verde);
+  border-color: var(--bosque);
   background: transparent;
-  color: var(--verde);
+  color: var(--bosque);
 }
 
 .btn--secundario:hover {
-  background: var(--celeste);
+  background: var(--salvia);
 }
 
 .btn--acento {
-  background: var(--salmon);
-  color: var(--verde);
+  background: var(--rosa);
+  color: var(--bosque);
 }
 
 .btn--peligro {
   background: var(--error);
-  color: var(--offwhite);
+  color: var(--beige);
 }
 
 .btn--peligro-borde {
@@ -87,7 +87,7 @@
   border-radius: var(--radio-mediano);
   background: var(--blanco);
   font-size: 16px;
-  color: var(--verde);
+  color: var(--bosque);
 }
 
 .field__box::placeholder {
@@ -96,7 +96,7 @@
 }
 
 .field__box:focus {
-  border-color: var(--verde);
+  border-color: var(--bosque);
   outline: none;
 }
 
@@ -149,7 +149,7 @@
 
 .notice__text {
   margin-top: 6px;
-  color: var(--verde);
+  color: var(--bosque);
 }
 
 .notice__actions {
@@ -175,7 +175,7 @@
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  border: 1.2px solid var(--verde);
+  border: 1.2px solid var(--bosque);
   border-radius: var(--radio-pildora);
   white-space: nowrap;
 }
@@ -186,21 +186,32 @@
 }
 
 .tag--ok {
-  background: var(--celeste);
+  background: var(--salvia);
+}
+
+.tag--acento {
+  border-color: var(--rosa);
+  background: var(--rosa);
+}
+
+.tag--alerta {
+  border-color: var(--alerta);
+  background: var(--alerta-fondo);
+  color: var(--alerta);
 }
 
 .chip {
   padding: 10px 16px;
-  border: 1.2px solid var(--verde);
+  border: 1.2px solid var(--bosque);
   border-radius: var(--radio-pildora);
   background: transparent;
-  color: var(--verde);
+  color: var(--bosque);
   cursor: pointer;
 }
 
 .chip[aria-pressed='true'] {
-  background: var(--verde);
-  color: var(--offwhite);
+  background: var(--bosque);
+  color: var(--beige);
 }
 
 .chip:disabled {
@@ -231,7 +242,7 @@
 }
 
 .toggle[aria-checked='true'] {
-  background: var(--verde);
+  background: var(--bosque);
 }
 
 .toggle[aria-checked='true'] .toggle__knob {
@@ -258,4 +269,48 @@
 
 .drawing--pair img + img {
   margin-left: -28px;
+}
+
+/* ---------- Peso a lo largo del tiempo ---------- */
+
+.peso {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.peso svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.peso__grid {
+  stroke: rgb(31 58 46 / 0.18);
+  stroke-dasharray: 3 4;
+}
+
+.peso__eje {
+  fill: var(--texto-suave);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.peso__linea {
+  fill: none;
+  stroke: var(--bosque);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.peso__punto {
+  fill: var(--beige);
+  stroke: var(--bosque);
+  stroke-width: 1.5;
+}
+
+.peso__punto--ultimo {
+  fill: var(--bosque);
 }

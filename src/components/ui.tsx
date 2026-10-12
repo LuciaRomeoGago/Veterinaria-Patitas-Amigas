@@ -94,7 +94,7 @@ export function Notice({ tipo, titulo, children, acciones }: NoticeProps) {
 }
 
 /** Componente "Etiqueta": píldora con contorno. */
-export function Tag({ children, tone }: { children: ReactNode; tone?: 'error' | 'ok' }) {
+export function Tag({ children, tone }: { children: ReactNode; tone?: 'error' | 'ok' | 'alerta' | 'acento' }) {
   return <span className={`tag mono-etiqueta${tone ? ' tag--' + tone : ''}`}>{children}</span>;
 }
 

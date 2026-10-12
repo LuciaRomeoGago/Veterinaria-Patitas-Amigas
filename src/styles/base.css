@@ -13,8 +13,8 @@ body {
   font-family: var(--texto);
   font-size: 16px;
   line-height: 1.5;
-  color: var(--verde);
-  background: var(--offwhite);
+  color: var(--bosque);
+  background: var(--beige);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -54,7 +54,7 @@ ol {
 }
 
 :focus-visible {
-  outline: 2px solid var(--verde);
+  outline: 2px solid var(--bosque);
   outline-offset: 3px;
 }
 
@@ -140,6 +140,23 @@ ol {
 .mono-dato {
   font-size: 14px;
   line-height: 1.4;
+}
+
+/* Sobre salvia el verde bosque queda justo en 4,5:1 y el texto suave no se lee:
+   dentro de estas superficies todo el texto pasa a bosque oscuro (5,4:1). */
+.card--salvia,
+.pet-row,
+.shortcut:hover,
+.btn--secundario:hover,
+.tag--ok,
+.vet-login__art,
+.vet-side__item[aria-current='page'],
+.slot--turno.is-atendido,
+.buscador__opcion[aria-selected='true'] {
+  --bosque: var(--bosque-oscuro);
+  --texto-suave: var(--bosque-oscuro);
+  --error: var(--error-sobre-salvia);
+  color: var(--bosque-oscuro);
 }
 
 @media (prefers-reduced-motion: reduce) {

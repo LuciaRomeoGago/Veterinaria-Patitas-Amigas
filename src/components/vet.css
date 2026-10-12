@@ -3,7 +3,7 @@
 .vet {
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--offwhite);
+  background: var(--beige);
 }
 
 .vet-shell {
@@ -22,8 +22,8 @@
   height: 100vh;
   height: 100dvh;
   padding: 40px 24px;
-  background: var(--verde);
-  color: var(--offwhite);
+  background: var(--bosque);
+  color: var(--beige);
 }
 
 .vet-side__logo {
@@ -37,20 +37,37 @@
 }
 
 .vet-side__item {
-  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 16px;
   border-radius: var(--radio-pildora);
-  color: var(--offwhite);
+  color: var(--beige);
+  font-family: var(--texto);
+  font-size: 16px;
+  font-weight: 600;
   text-decoration: none;
   transition: background-color 0.2s var(--ease);
 }
 
+.vet-side__icon {
+  display: grid;
+  place-items: center;
+}
+
+.vet-side__item:focus-visible {
+  outline: 3px solid var(--salvia);
+  outline-offset: 2px;
+}
+
 .vet-side__item:hover {
-  background: rgb(215 235 249 / 0.15);
+  background: rgb(143 163 130 / 0.22);
 }
 
 .vet-side__item[aria-current='page'] {
-  background: var(--celeste);
-  color: var(--verde);
+  background: var(--salvia);
+  color: var(--bosque-oscuro);
 }
 
 .vet-side__session {
@@ -60,16 +77,17 @@
 }
 
 .vet-side__session .texto-chico {
-  color: var(--celeste);
+  color: var(--salvia);
 }
 
 .vet-side__session button {
   justify-self: start;
   margin-top: 8px;
+  min-height: 32px;
   padding: 0;
   border: 0;
   background: none;
-  color: var(--salmon);
+  color: var(--rosa);
   cursor: pointer;
 }
 
@@ -127,7 +145,7 @@
 
 .vet-table th {
   padding-block: 12px;
-  border-bottom: 1px solid var(--verde);
+  border-bottom: 1px solid var(--bosque);
   color: var(--texto-suave);
   font-weight: 500;
 }
@@ -165,6 +183,13 @@
   white-space: nowrap;
 }
 
+.cell-stock {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
 .row-actions {
   display: inline-flex;
   gap: 16px;
@@ -176,7 +201,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--verde);
+  color: var(--bosque);
   text-decoration: none;
   cursor: pointer;
 }
@@ -208,7 +233,7 @@
 }
 
 .vet-search:focus {
-  border-color: var(--verde);
+  border-color: var(--bosque);
   outline: none;
 }
 
@@ -220,7 +245,7 @@
   z-index: 20;
   display: flex;
   justify-content: flex-end;
-  background: rgb(46 42 8 / 0.45);
+  background: rgb(23 44 34 / 0.45);
   animation: vet-fade 0.2s var(--ease);
 }
 
@@ -238,7 +263,7 @@
   height: 100%;
   overflow-y: auto;
   padding: 48px 40px;
-  background: var(--offwhite);
+  background: var(--beige);
   animation: vet-slide 0.28s var(--ease);
 }
 
@@ -262,7 +287,7 @@
   width: min(520px, 100%);
   padding: 40px;
   border-radius: var(--radio-grande);
-  background: var(--offwhite);
+  background: var(--beige);
 }
 
 .vet-modal__actions {
@@ -279,7 +304,7 @@
   z-index: 30;
   width: min(400px, calc(100% - 48px));
   border-radius: var(--radio-mediano);
-  box-shadow: 0 8px 24px rgb(46 42 8 / 0.18);
+  box-shadow: 0 8px 24px rgb(23 44 34 / 0.18);
   animation: vet-up 0.25s var(--ease);
 }
 
@@ -294,7 +319,7 @@
   width: 24px;
   height: 24px;
   margin: 0;
-  accent-color: var(--verde);
+  accent-color: var(--bosque);
 }
 
 @keyframes vet-fade {
@@ -317,7 +342,7 @@
   }
 }
 
-/* ---------- Ingreso de veterinarios: panel celeste + formulario ---------- */
+/* ---------- Ingreso de veterinarios: panel salvia + formulario ---------- */
 
 .vet-login {
   display: grid;
@@ -332,7 +357,7 @@
   justify-content: space-between;
   gap: 32px;
   padding: 64px;
-  background: var(--celeste);
+  background: var(--salvia);
 }
 
 .vet-login__art .logo {
@@ -355,45 +380,158 @@
   padding: 56px clamp(24px, 8vw, 120px);
 }
 
-/* ---------- Pantallas angostas: el menú pasa arriba ---------- */
+/* ---------- Tablet: el menú lateral se angosta ---------- */
 
+@media (max-width: 1100px) and (min-width: 901px) {
+  .vet-shell {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .vet-main {
+    padding: 48px 40px;
+  }
+}
+
+/*
+ * ---------- Celular y tablet chica ----------
+ * Arriba queda una barra con el logo, quién ingresó y Salir; las cuatro secciones
+ * pasan a una barra fija abajo, igual que en la app del cliente. Las tablas se leen
+ * como tarjetas y los paneles ocupan toda la pantalla.
+ */
 @media (max-width: 900px) {
   .vet-shell {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
   }
 
   .vet-side {
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 6;
     flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     height: auto;
-    padding: 16px 24px;
+    padding: 10px 16px;
   }
 
   .vet-side__logo {
-    width: 56px;
-    height: 56px;
-  }
-
-  .vet-side__nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
+    width: 44px;
+    height: 44px;
   }
 
   .vet-side__session {
     margin: 0 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .vet-side__session .texto-chico {
+    display: none;
+  }
+
+  .vet-side__session button {
+    margin: 0;
+    min-height: 44px;
+  }
+
+  .vet-side__nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 6;
+    display: grid;
+    grid-auto-columns: minmax(0, 112px);
+    grid-auto-flow: column;
+    justify-content: space-around;
+    gap: 0;
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+    border-radius: var(--radio-grande) var(--radio-grande) 0 0;
+    background: var(--bosque);
+  }
+
+  .vet-side__item {
+    flex-direction: column;
+    gap: 4px;
+    min-height: 60px;
+    padding: 6px 4px;
+    border-radius: var(--radio-mediano);
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .vet-side__item:hover,
+  .vet-side__item[aria-current='page'] {
+    background: none;
+    color: var(--beige);
+  }
+
+  .vet-side__icon {
+    width: min(64px, 100%);
+    height: 32px;
+    border-radius: var(--radio-pildora);
+    transition: background-color 0.2s var(--ease);
+  }
+
+  .vet-side__item:hover:not([aria-current]) .vet-side__icon {
+    background: rgb(143 163 130 / 0.22);
+  }
+
+  .vet-side__item[aria-current='page'] .vet-side__icon {
+    background: var(--salvia);
+    color: var(--bosque-oscuro);
+  }
+
+  .vet-side__item:focus-visible {
+    outline-offset: -3px;
   }
 
   .vet-main {
-    padding: 32px 24px;
+    gap: 20px;
+    padding: 24px 16px calc(108px + env(safe-area-inset-bottom));
   }
 
   .vet-head {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .vet-head .display-l {
+    font-size: 48px;
+  }
+
+  .vet-head > .btn {
+    width: 100%;
+  }
+
+  .vet-search {
+    width: 100%;
+  }
+
+  .vet-panel {
+    width: 100%;
+    padding: 28px 20px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .vet-modal {
+    padding: 28px 20px;
+  }
+
+  .vet-overlay--center {
+    padding: 16px;
+  }
+
+  .vet-toast {
+    right: 16px;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    width: calc(100% - 32px);
+  }
+
+  .row-3 {
+    grid-template-columns: 1fr 1fr;
   }
 
   .vet-login {
@@ -403,9 +541,95 @@
   .vet-login__art {
     padding: 32px 24px;
   }
+}
 
-  .vet-toast {
-    right: 24px;
+/* Las tablas, en el celular, se leen como tarjetas: cada fila con sus datos rotulados. */
+@media (max-width: 700px) {
+  .vet-table-wrap {
+    overflow: visible;
+    padding: 0;
+    background: none;
+  }
+
+  .vet-table,
+  .vet-ficha__detail .vet-table {
+    min-width: 0;
+  }
+
+  .vet-table colgroup,
+  .vet-table thead {
+    display: none;
+  }
+
+  .vet-table,
+  .vet-table tbody,
+  .vet-table tr {
+    display: block;
+  }
+
+  .vet-table tr {
+    padding: 12px 20px;
+    border-radius: var(--radio-grande);
+    background: var(--blanco);
+  }
+
+  .vet-table tr + tr {
+    margin-top: 12px;
+  }
+
+  .vet-table td,
+  .vet-table td:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0;
+    border: 0;
+    text-align: right;
+  }
+
+  .vet-table td::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--texto-suave);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .vet-table td:not([data-label]) {
+    justify-content: flex-start;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borde);
+  }
+
+  .vet-table td:not([data-label])::before {
+    content: none;
+  }
+
+  .vet-table .cell-clip {
+    white-space: normal;
+  }
+
+  .vet-table__empty {
+    justify-content: center !important;
+    border-top: 0 !important;
+  }
+
+  .row-actions {
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    width: 100%;
+  }
+
+  .row-actions button,
+  .row-actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 }
 
@@ -464,13 +688,15 @@
   text-decoration: none;
 }
 
-.vet-ficha__detail {
-  display: grid;
-  gap: 16px;
-}
-
 .vet-ficha__detail .vet-table {
   min-width: 520px;
+}
+
+@media (min-width: 1101px) {
+  .card.vet-ficha__pet {
+    position: sticky;
+    top: 24px;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -479,6 +705,865 @@
   }
 
   .vet-ficha__pet .drawing img {
-    height: 200px !important;
+    height: 160px !important;
+  }
+}
+
+/* ---------- Historia clínica por partes ---------- */
+
+.hc {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.hc__tools {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.hc__search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 20px;
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  color: var(--bosque);
+}
+
+.hc__search:focus-within {
+  border-color: var(--bosque);
+  box-shadow: 0 0 0 1.5px var(--bosque);
+}
+
+.hc__search input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 0;
+  border: 0;
+  background: none;
+  color: var(--bosque);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+}
+
+.hc__search input::placeholder {
+  color: var(--texto-suave);
+}
+
+.hc__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: var(--radio-pildora);
+  background: rgb(31 58 46 / 0.1);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+.chip[aria-pressed='true'] .hc__count {
+  background: rgb(242 235 223 / 0.22);
+}
+
+.hc__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.hc-part {
+  display: grid;
+  gap: 8px;
+  padding: 20px 24px;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+}
+
+.hc-part--alerta {
+  background: var(--error-fondo);
+}
+
+.hc-part--ancha {
+  grid-column: 1 / -1;
+}
+
+.hc-part__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.hc-part__head h3 {
+  display: flex;
+  align-items: center;
+}
+
+.hc-part__list > li + li {
+  border-top: 1px solid var(--borde);
+}
+
+.hc-part--alerta .hc-part__list > li + li {
+  border-top-color: rgb(154 59 46 / 0.2);
+}
+
+.hc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+}
+
+.hc-row__text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hc-row__side {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  flex: none;
+}
+
+.hc-row .row-actions {
+  gap: 16px;
+}
+
+.hc mark {
+  border-radius: 3px;
+  background: var(--rosa);
+  color: inherit;
+}
+
+.hc__empty {
+  padding: 32px 24px;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  /* Los filtros se deslizan de costado en vez de ocupar tres renglones. */
+  .chips.hc__filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -16px;
+    padding: 2px 16px 6px;
+    scrollbar-width: none;
+  }
+
+  .hc__filters .chip {
+    flex: none;
+  }
+
+  .hc-part {
+    padding: 16px 20px;
+  }
+}
+
+/* En el celular, la etiqueta y las acciones van debajo del texto, a todo el ancho. */
+@media (max-width: 600px) {
+  .hc-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hc-row__side {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    gap: 8px 16px;
+  }
+
+  .hc-row__side .row-actions {
+    width: auto;
+    margin-left: auto;
+  }
+}
+
+/* ---------- Aviso al recetar ---------- */
+
+.alerta-receta ul {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  color: var(--bosque);
+}
+
+.alerta-receta .check {
+  margin-top: 12px;
+  color: var(--bosque);
+}
+
+.alerta-receta .check input {
+  accent-color: var(--error);
+}
+
+.stack-8 {
+  display: grid;
+  gap: 8px;
+}
+
+.stack-12 {
+  display: grid;
+  gap: 12px;
+}
+
+/* ---------- Agenda: día o semana, bloqueos ---------- */
+
+.vet-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.agenda-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+/* Selector Día / Semana: dos opciones pegadas, la elegida en bosque. */
+.segmented {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  box-shadow: inset 0 0 0 1.2px var(--borde);
+}
+
+.segmented button {
+  min-width: 88px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  background: none;
+  color: var(--bosque);
+  font-family: var(--texto);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--bosque);
+  color: var(--beige);
+}
+
+/*
+ * Semana de un veterinario: una columna por día y una fila cada 30 minutos (mañana y tarde,
+ * con una fila angosta en el medio). Cada turno ocupa las filas de lo que dura.
+ */
+.semana {
+  display: grid;
+  grid-template-columns: 52px repeat(5, minmax(0, 1fr));
+  grid-template-rows: auto repeat(7, minmax(52px, auto)) 28px repeat(6, minmax(52px, auto));
+  gap: 6px 10px;
+}
+
+.semana__hora {
+  grid-column: 1;
+  align-self: start;
+  padding-top: 8px;
+}
+
+.semana__corte {
+  grid-column: 1 / -1;
+  align-self: center;
+  border-top: 1px dashed var(--borde);
+  padding-top: 4px;
+}
+
+.semana__head {
+  grid-row: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--bosque);
+}
+
+.semana__head.is-hoy {
+  border-bottom-width: 3px;
+}
+
+.slot {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 12px;
+  color: var(--bosque);
+  font: inherit;
+  text-align: left;
+}
+
+button.slot {
+  cursor: pointer;
+}
+
+.slot__linea {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.slot__estado {
+  margin-top: auto;
+}
+
+.slot--turno {
+  background: var(--blanco);
+  box-shadow: inset 4px 0 0 var(--bosque);
+}
+
+.slot--turno.is-en_espera {
+  box-shadow: inset 4px 0 0 var(--alerta);
+}
+
+.slot--turno.is-en_consulta {
+  background: var(--rosa);
+  box-shadow: none;
+}
+
+.slot--turno.is-atendido {
+  background: var(--salvia);
+  box-shadow: none;
+}
+
+.slot--bloqueado {
+  background: repeating-linear-gradient(135deg, var(--alerta-fondo) 0 10px, rgb(228 212 152 / 0.45) 10px 20px);
+  color: var(--alerta);
+}
+
+.slot--libre {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  background: none;
+  box-shadow: inset 0 0 0 1.2px var(--borde);
+}
+
+.slot--libre .slot__estado {
+  justify-self: end;
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+@media (hover: hover) {
+  button.slot--libre:hover {
+    box-shadow: inset 0 0 0 1.5px var(--bosque);
+  }
+}
+
+.slot.is-pasado {
+  opacity: 0.45;
+}
+
+/* En el celular la semana se lee día por día: cada horario en una fila, sin la columna de horas. */
+@media (max-width: 900px) {
+  .semana {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .semana__hora,
+  .semana__corte {
+    display: none;
+  }
+
+  .semana__head:not(:first-of-type) {
+    margin-top: 16px;
+  }
+
+  .slot {
+    min-height: 52px;
+  }
+
+  .vet-head__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vet-head__actions .btn {
+    min-width: 0;
+    padding-inline: 12px;
+    white-space: normal;
+  }
+}
+
+/* ---------- Buscador general ---------- */
+
+.vet-top {
+  display: flex;
+  justify-content: flex-end;
+  margin: -24px 0 -8px;
+}
+
+.buscador {
+  position: relative;
+  width: min(440px, 100%);
+}
+
+.buscador__campo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 12px 0 18px;
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  color: var(--bosque);
+}
+
+.buscador__campo:focus-within {
+  border-color: var(--bosque);
+  box-shadow: 0 0 0 1.5px var(--bosque);
+}
+
+.buscador__campo input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  color: var(--bosque);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+}
+
+.buscador__campo input::placeholder {
+  color: var(--texto-suave);
+}
+
+.buscador__atajo {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  color: var(--texto-suave);
+}
+
+.buscador__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  z-index: 15;
+  max-height: min(420px, 70dvh);
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: var(--radio-mediano);
+  background: var(--blanco);
+  box-shadow: 0 12px 32px rgb(23 44 34 / 0.18);
+}
+
+.buscador__grupo {
+  padding: 10px 12px 4px;
+}
+
+.buscador__opcion {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.buscador__opcion[aria-selected='true'] {
+  background: var(--salvia);
+}
+
+.buscador__vacio {
+  padding: 12px;
+}
+
+/* ---------- Resumen del mes ---------- */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.kpi {
+  display: grid;
+  gap: 4px;
+  padding: 20px 24px;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+}
+
+.kpi .display-l {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  gap: 16px;
+}
+
+.resumen-card {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+}
+
+.barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 200px;
+  padding-top: 8px;
+  border-bottom: 1px solid var(--bosque);
+}
+
+.barras__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  position: relative;
+}
+
+.barras__barra {
+  width: 100%;
+  max-width: 56px;
+  min-height: 2px;
+  border-radius: 8px 8px 0 0;
+  background: var(--bosque);
+}
+
+.barras__label {
+  position: absolute;
+  bottom: -26px;
+}
+
+.barras + p {
+  margin-top: 24px;
+}
+
+.ranking {
+  display: grid;
+  gap: 16px;
+}
+
+.ranking__row {
+  display: grid;
+  gap: 6px;
+}
+
+.ranking__barra {
+  height: 10px;
+  border-radius: var(--radio-pildora);
+  background: var(--salvia);
+  box-shadow: inset 0 0 0 1px rgb(31 58 46 / 0.15);
+}
+
+@media (max-width: 900px) {
+  .vet-top {
+    position: sticky;
+    top: 64px;
+    z-index: 5;
+    margin: -24px -16px 0;
+    padding: 8px 16px 12px;
+    background: var(--beige);
+  }
+
+  .buscador {
+    width: 100%;
+  }
+
+  .buscador__atajo {
+    display: none;
+  }
+
+  .kpis {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .kpi {
+    padding: 16px;
+  }
+
+  .kpi .display-l {
+    font-size: 36px;
+  }
+
+  .resumen-card {
+    padding: 20px;
+  }
+}
+
+/* ---------- Sala de espera ---------- */
+
+.sala {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+}
+
+.sala__cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.sala__col {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.sala__col > h3 {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--bosque);
+}
+
+.sala__col ul {
+  display: grid;
+}
+
+.sala__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.sala__fila:last-child {
+  border-bottom: 0;
+}
+
+.sala__texto {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.estado-espera {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+@media (max-width: 1100px) {
+  .sala__cols {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .sala {
+    padding: 20px;
+  }
+}
+
+/* Hora de comienzo y fin del turno, en una línea. */
+.vet-table .cell-mono {
+  white-space: nowrap;
+}
+
+.vet-panel .link-button {
+  justify-self: start;
+}
+
+/* ---------- Horarios (mañana y tarde) ---------- */
+
+.horarios {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ---------- Calculadora de dosis ---------- */
+
+.calc {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border-radius: var(--radio-mediano);
+  background: var(--blanco);
+  box-shadow: inset 0 0 0 1.2px var(--borde);
+}
+
+.calc__resultado {
+  display: grid;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--beige);
+}
+
+.calc__ojo {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.calc .btn {
+  justify-self: start;
+}
+
+/* ---------- Estudios y fotos ---------- */
+
+.adjuntos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.adjunto {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--beige);
+  color: var(--bosque);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.adjunto img,
+.adjunto__pdf {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.adjunto__pdf {
+  display: grid;
+  place-items: center;
+  background: var(--blanco);
+  box-shadow: inset 0 0 0 1.2px var(--borde);
+}
+
+@media (hover: hover) {
+  .adjunto:hover {
+    box-shadow: inset 0 0 0 1.5px var(--bosque);
+  }
+}
+
+.visor__img {
+  width: 100%;
+  max-height: 60vh;
+  border-radius: var(--radio-mediano);
+  object-fit: contain;
+  background: var(--beige);
+}
+
+.field__box--file {
+  padding: 10px 12px;
+}
+
+.hc-row__tomas.is-falta {
+  color: var(--alerta);
+}
+
+/* ---------- Historial de cambios ---------- */
+
+.cambios__lista {
+  display: grid;
+  gap: 10px;
+}
+
+.cambios__lista li {
+  display: grid;
+  gap: 2px;
+  padding-left: 12px;
+  border-left: 2px solid var(--borde);
+}
+
+/* ---------- Stock y caja ---------- */
+
+.movs {
+  display: grid;
+}
+
+.movs__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.is-egreso {
+  color: var(--error);
+}
+
+.is-alerta {
+  color: var(--alerta);
+}
+
+/* ---------- Imprimir (el resumen como PDF) ---------- */
+
+@media print {
+  .vet-side,
+  .vet-top,
+  .no-print,
+  .vet-toast {
+    display: none !important;
+  }
+
+  .vet,
+  .vet-shell {
+    display: block;
+    background: #fff;
+  }
+
+  .vet-main {
+    padding: 0;
+  }
+
+  .kpi,
+  .resumen-card,
+  .vet-table-wrap {
+    break-inside: avoid;
+    box-shadow: inset 0 0 0 1px var(--borde);
   }
 }
