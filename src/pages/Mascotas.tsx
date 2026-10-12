@@ -2,10 +2,13 @@ import { useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Back, Button, Chip, Drawing, Field, Notice, Tag, TextArea } from '../components/ui';
 import { Screen, Sheet } from '../components/Layout';
-import type { Especie } from '../data/types';
+import { PesoChart } from '../components/PesoChart';
+import type { Especie, PlanTomas } from '../data/types';
+import { progreso, tomasDelDia } from '../lib/tomas';
 import { fechaCorta } from '../lib/dates';
 import { edad, vacunaVencida } from '../lib/format';
-import { useStore } from '../lib/store';
+import { PARTES, estado } from '../lib/historia';
+import { ahora, useStore } from '../lib/store';
 import { Empty } from './Turnos';
 import './pages.css';
 
@@ -78,9 +81,9 @@ export function Ficha() {
   };
 
   return (
-    <Screen label={`Ficha de ${m.nombre}`}>
+    <Screen nav="mascotas" label={`Ficha de ${m.nombre}`}>
       <Back to="/mascotas">Mis mascotas</Back>
-      <div className="card card--celeste pet-hero">
+      <div className="card card--blanco pet-hero">
         <Drawing especie={m.especie} height={228} />
       </div>
       <h1 className="display-l">{m.nombre}</h1>
@@ -101,6 +104,15 @@ export function Ficha() {
         )}
       </dl>
 
+      {m.pesos.length > 1 && (
+        <section className="stack-10">
+          <h2 className="display-s">Peso</h2>
+          <div className="card card--blanco">
+            <PesoChart pesos={m.pesos} />
+          </div>
+        </section>
+      )}
+
       <Section titulo="Vacunas" vacio="Todavía no hay vacunas registradas.">
         {m.vacunas.map((v) => (
           <li key={v.nombre} className="list__row">
@@ -113,17 +125,26 @@ export function Ficha() {
         ))}
       </Section>
 
-      <Section titulo="Alergias y medicación" vacio="Sin alergias ni medicación cargadas.">
-        {m.indicaciones.map((x) => (
-          <li key={x.titulo} className="list__row">
-            <div className="list__text">
-              <p className="texto-fuerte">{x.titulo}</p>
-              <p className="texto-chico suave">{x.detalle}</p>
-            </div>
-            {x.tipo === 'alergia' ? <Tag tone="error">Alergia</Tag> : <Tag>En curso</Tag>}
-          </li>
-        ))}
-      </Section>
+      {/* Historia clínica por partes: alergias siempre; el resto, si hay algo cargado. */}
+      {PARTES.filter((p) => p.tipo === 'alergia' || m.registros.some((r) => r.tipo === p.tipo)).map((p) => (
+        <Section key={p.tipo} titulo={p.titulo} vacio={p.vacio}>
+          {m.registros
+            .filter((r) => r.tipo === p.tipo)
+            .map((r) => {
+              const e = estado(r);
+              return (
+                <li key={r.id} className="list__row">
+                  <div className="list__text">
+                    <p className="texto-fuerte">{r.titulo}</p>
+                    {r.detalle && <p className="texto-chico suave">{r.detalle}</p>}
+                    {r.plan && r.vigente && <Tratamiento mascotaId={m.id} registroId={r.id} plan={r.plan} />}
+                  </div>
+                  {e && <Tag tone={e.tone}>{e.texto}</Tag>}
+                </li>
+              );
+            })}
+        </Section>
+      ))}
 
       <Section titulo="Historial" vacio="Todavía no hay visitas registradas.">
         {m.historial.map((h) => (
@@ -162,6 +183,35 @@ export function Ficha() {
         </Sheet>
       )}
     </Screen>
+  );
+}
+
+/** Medicación en casa: en qué día va, cuántas tomas se dieron y las de hoy para marcar. */
+function Tratamiento({ mascotaId, registroId, plan }: { mascotaId: number; registroId: number; plan: PlanTomas }) {
+  const { hoy, marcarToma } = useStore();
+  const p = progreso(plan, ahora());
+  const deHoy = tomasDelDia(plan, hoy);
+  return (
+    <div className="tratamiento">
+      <p className="mono-etiqueta">
+        {p.terminado ? 'Tratamiento terminado' : `Día ${p.dia} de ${plan.dias}`} · {p.dadas} de {p.tocaban} tomas dadas
+      </p>
+      <div className="tratamiento__barra" aria-hidden="true">
+        <span style={{ width: `${(p.dadas / p.total) * 100}%` }} />
+      </div>
+      {deHoy.length > 0 && (
+        <div className="chips" role="group" aria-label="Tomas de hoy">
+          {deHoy.map((c) => {
+            const dada = plan.dadas.includes(c);
+            return (
+              <button key={c} type="button" className="chip mono-etiqueta" aria-pressed={dada} onClick={() => marcarToma(mascotaId, registroId, c)} aria-label={`Toma de las ${c.slice(11)}, ${dada ? 'dada' : 'sin dar'}`}>
+                {c.slice(11)}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -210,7 +260,7 @@ export function MascotaForm() {
   };
 
   return (
-    <Screen label={actual ? `Editar a ${actual.nombre}` : 'Agregar mascota'}>
+    <Screen nav="mascotas" label={actual ? `Editar a ${actual.nombre}` : 'Agregar mascota'}>
       <form className="form-screen form-screen--20" onSubmit={submit} noValidate>
         <Back to={actual ? `/mascotas/${actual.id}` : '/mascotas'}>{actual ? actual.nombre : 'Mis mascotas'}</Back>
         <h1 className="display-l">{actual ? `Editar a ${actual.nombre}` : 'Agregar mascota'}</h1>
