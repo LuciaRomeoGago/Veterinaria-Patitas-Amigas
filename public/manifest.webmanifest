@@ -1,0 +1,16 @@
+{
+  "name": "Veterinaria Patitas amigas",
+  "short_name": "Patitas amigas",
+  "description": "Turnos, mascotas, vacunas y tienda de la Veterinaria Patitas amigas.",
+  "lang": "es-AR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F2EBDF",
+  "theme_color": "#1F3A2E",
+  "icons": [
+    { "src": "/img/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/img/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/img/icono-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
