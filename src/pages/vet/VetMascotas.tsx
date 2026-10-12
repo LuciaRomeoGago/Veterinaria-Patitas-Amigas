@@ -1,15 +1,19 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Back, Chip, Drawing, Field, Tag, TextArea } from '../../components/ui';
+import { Back, Chip, Drawing, Field, Notice, TextArea } from '../../components/ui';
+import { PesoChart } from '../../components/PesoChart';
 import { Modal, Panel, PanelActions, RowActions, Table, VetHead, VetScreen, useToast } from '../../components/vet';
-import type { Especie, Indicacion, Mascota } from '../../data/types';
+import type { Adjunto, Especie, Mascota, Registro, TipoRegistro } from '../../data/types';
 import { addYears, fechaCorta } from '../../lib/dates';
 import { edad, plural, vacunaVencida } from '../../lib/format';
+import { parte } from '../../lib/historia';
+import { HistoriaClinica, QuitarRegistro, RegistroPanel } from './HistoriaClinica';
 import { useStore } from '../../lib/store';
+import { SubirPanel, Visor } from './Adjuntos';
 
 /** 27 · Mascotas de un cliente (con agregar, editar y eliminar). */
 export function VetMascotas() {
-  const { clientes, mascotasDe, deleteMascota } = useStore();
+  const { clientes, mascotasDe, deleteMascota, puede } = useStore();
   const [params, setParams] = useSearchParams();
   const clienteId = Number(params.get('cliente')) || clientes[0]?.id;
   const cliente = clientes.find((c) => c.id === clienteId);
@@ -29,7 +33,7 @@ export function VetMascotas() {
           </button>
         }
       />
-      <div className="card card--celeste vet-client-pick">
+      <div className="card card--salvia vet-client-pick">
         <label htmlFor="cliente" className="mono-etiqueta suave">
           Cliente
         </label>
@@ -45,7 +49,7 @@ export function VetMascotas() {
       <Table
         caption={`Mascotas de ${cliente?.nombre ?? ''}`}
         empty="Este cliente todavía no tiene mascotas."
-        columns={[{ label: 'N.º', width: '6%' }, { label: 'Nombre', width: '12%' }, { label: 'Edad', width: '9%' }, { label: 'Raza', width: '14%' }, { label: 'Historial médico', width: '33%' }, { label: '', align: 'right' }]}
+        columns={[{ label: 'N.º', width: '6%' }, { label: 'Nombre', width: '12%' }, { label: 'Edad', width: '9%' }, { label: 'Raza', width: '14%' }, { label: puede('historia') ? 'Historial médico' : 'Dueña o dueño', width: '33%' }, { label: '', align: 'right' }]}
         rows={lista.map((m) => ({
           key: m.id,
           cells: [
@@ -55,12 +59,16 @@ export function VetMascotas() {
             </Link>,
             edad(m.edad),
             m.raza,
-            <span className="cell-clip" title={m.historial[0]?.detalle}>
-              {m.historial[0] ? `${m.historial[0].titulo}${m.historial[0].detalle ? ': ' + m.historial[0].detalle : ''}` : '—'}
-            </span>,
+            puede('historia') ? (
+              <span className="cell-clip" title={m.historial[0]?.detalle}>
+                {m.historial[0] ? `${m.historial[0].titulo}${m.historial[0].detalle ? ': ' + m.historial[0].detalle : ''}` : '—'}
+              </span>
+            ) : (
+              cliente?.nombre
+            ),
             <RowActions
               actions={[
-                { label: 'Ficha', to: `/vet/mascotas/${m.id}`, onClick: () => {} },
+                { label: 'Ficha', to: `/vet/mascotas/${m.id}` },
                 { label: 'Editar', onClick: () => setPanel({ mascota: m }) },
                 { label: 'Eliminar', danger: true, onClick: () => setBorrar(m) },
               ]}
@@ -108,7 +116,7 @@ export function VetMascotas() {
 
 /** Agregar o editar mascota (31 · Editar mascota). */
 function MascotaPanel({ clienteId, mascota, onClose, onSaved }: { clienteId: number; mascota?: Mascota; onClose: () => void; onSaved: (nombre: string) => void }) {
-  const { clientes, addMascota, editMascota } = useStore();
+  const { clientes, addMascota, editMascotaVet: editMascota } = useStore();
   const duenio = clientes.find((c) => c.id === (mascota?.clienteId ?? clienteId));
   const [especie, setEspecie] = useState<Especie>(mascota?.especie ?? 'perro');
   const [nombre, setNombre] = useState(mascota?.nombre ?? '');
@@ -166,10 +174,13 @@ function MascotaPanel({ clienteId, mascota, onClose, onSaved }: { clienteId: num
 /** 28 · Ficha de mascota, con 29 · Registrar vacuna y 30 · Vacuna registrada. */
 export function VetFicha() {
   const { id } = useParams();
-  const { mascota, duenio, registrarVacuna, addIndicacion, removeIndicacion, addNota, hoy } = useStore();
+  const { mascota, duenio, registrarVacuna, addRegistro, editRegistro, removeRegistro, addNota, removeAdjunto, hoy, puede } = useStore();
   const navigate = useNavigate();
   const m = mascota(Number(id));
-  const [panel, setPanel] = useState<'vacuna' | 'indicaciones' | 'nota' | 'editar' | null>(null);
+  const [panel, setPanel] = useState<'vacuna' | 'nota' | 'editar' | 'subir' | 'cambios' | null>(null);
+  const [visto, setVisto] = useState<Adjunto | null>(null);
+  const [registro, setRegistro] = useState<{ tipo: TipoRegistro; r?: Registro } | null>(null);
+  const [quitar, setQuitar] = useState<Registro | null>(null);
   const [toast, showToast] = useToast();
 
   if (!m) {
@@ -181,6 +192,7 @@ export function VetFicha() {
     );
   }
   const d = duenio(m.id);
+  const alergias = m.registros.filter((r) => r.tipo === 'alergia');
 
   return (
     <VetScreen label={`Ficha de ${m.nombre}`}>
@@ -195,7 +207,7 @@ export function VetFicha() {
         }
       />
       <div className="vet-ficha">
-        <div className="card card--celeste vet-ficha__pet">
+        <div className="card card--blanco vet-ficha__pet">
           <Drawing especie={m.especie} height={300} />
           <dl className="facts">
             <div>
@@ -213,47 +225,46 @@ export function VetFicha() {
               </div>
             )}
           </dl>
+          {alergias.length > 0 && (
+            <Notice tipo="error" titulo={alergias.length === 1 ? 'Alergia' : 'Alergias'}>
+              {alergias.map((r) => r.titulo).join(', ')}
+            </Notice>
+          )}
+          <div className="stack-8">
+            <p className="mono-etiqueta suave">Peso</p>
+            <PesoChart pesos={m.pesos} />
+          </div>
           <div className="stack-4">
             <p className="mono-etiqueta suave">Dueña o dueño</p>
             <Link to={`/vet/mascotas?cliente=${m.clienteId}`} className="texto-fuerte">
               {d?.nombre} · n.º {d?.id}
             </Link>
+            <p className="mono-dato suave">{d?.telefono}</p>
           </div>
-        </div>
-
-        <div className="vet-ficha__detail">
-          <SectionHead titulo="Vacunas" boton="Registrar vacuna" onClick={() => setPanel('vacuna')} />
-          <Table
-            caption={`Vacunas de ${m.nombre}`}
-            empty="Todavía no hay vacunas registradas."
-            columns={[{ label: 'Vacuna', width: '34%' }, { label: 'Aplicada', width: '22%' }, { label: 'Próxima dosis', width: '22%' }, { label: 'Estado' }]}
-            rows={m.vacunas.map((v) => ({
-              key: v.nombre,
-              cells: [<span className="cell-strong">{v.nombre}</span>, fechaCorta(v.aplicada), fechaCorta(v.proxima), vacunaVencida(v) ? <Tag tone="error">Vencida</Tag> : <Tag tone="ok">Al día</Tag>],
-            }))}
-          />
-
-          <SectionHead titulo="Alergias y medicación" boton="Editar" onClick={() => setPanel('indicaciones')} />
-          {m.indicaciones.length ? (
-            <div className="chips">
-              {m.indicaciones.map((x) => (
-                <Tag key={x.titulo} tone={x.tipo === 'alergia' ? 'error' : undefined}>
-                  {x.tipo === 'alergia' ? `Alergia: ${x.titulo.toLowerCase()}` : `${x.titulo} · ${x.detalle.toLowerCase()}`}
-                </Tag>
-              ))}
+          {puede('historia') && m.cambios.length > 0 && (
+            <div className="stack-8 cambios">
+              <p className="mono-etiqueta suave">Últimos cambios</p>
+              <Cambios m={m} cuantos={3} />
+              {m.cambios.length > 3 && (
+                <button type="button" className="link-button mono-etiqueta" onClick={() => setPanel('cambios')}>
+                  Ver los {m.cambios.length} cambios
+                </button>
+              )}
             </div>
-          ) : (
-            <p className="texto-chico suave">Sin alergias ni medicación cargadas.</p>
           )}
-
-          <SectionHead titulo="Historial" boton="Agregar nota" onClick={() => setPanel('nota')} />
-          <Table
-            caption={`Historial de ${m.nombre}`}
-            empty="Todavía no hay visitas registradas."
-            columns={[{ label: 'Fecha', width: '20%' }, { label: 'Detalle' }]}
-            rows={m.historial.map((h, i) => ({ key: i, cells: [<span className="cell-mono">{fechaCorta(h.fecha)}</span>, `${h.titulo}${h.detalle ? '. ' + h.detalle : ''}`] }))}
-          />
         </div>
+
+        <HistoriaClinica
+          m={m}
+          limitado={!puede('historia')}
+          onSubir={() => setPanel('subir')}
+          onVerAdjunto={setVisto}
+          onAgregar={(tipo) => setRegistro({ tipo })}
+          onEditar={(r) => setRegistro({ tipo: r.tipo, r })}
+          onQuitar={setQuitar}
+          onVacuna={() => setPanel('vacuna')}
+          onNota={() => setPanel('nota')}
+        />
       </div>
 
       {panel === 'vacuna' && (
@@ -269,7 +280,33 @@ export function VetFicha() {
           }}
         />
       )}
-      {panel === 'indicaciones' && <IndicacionesPanel m={m} onClose={() => setPanel(null)} onAdd={(x) => addIndicacion(m.id, x)} onRemove={(t) => removeIndicacion(m.id, t)} />}
+      {registro && (
+        <RegistroPanel
+          m={m}
+          duenio={d?.nombre ?? ''}
+          tipoInicial={registro.tipo}
+          registro={registro.r}
+          hoy={hoy}
+          onClose={() => setRegistro(null)}
+          onSave={(data) => {
+            if (registro.r) editRegistro(m.id, { ...data, id: registro.r.id });
+            else addRegistro(m.id, data);
+            setRegistro(null);
+            showToast('Historia clínica actualizada', `${data.titulo}, en ${parte(data.tipo).titulo.toLowerCase()}.`);
+          }}
+        />
+      )}
+      {quitar && (
+        <QuitarRegistro
+          r={quitar}
+          onClose={() => setQuitar(null)}
+          onConfirm={() => {
+            removeRegistro(m.id, quitar.id);
+            showToast('Quitado de la historia clínica', quitar.titulo);
+            setQuitar(null);
+          }}
+        />
+      )}
       {panel === 'nota' && (
         <NotaPanel
           m={m}
@@ -280,6 +317,34 @@ export function VetFicha() {
             showToast('Nota agregada', `Al historial de ${m.nombre}.`);
           }}
         />
+      )}
+      {!puede('historia') && <p className="texto-chico suave">La historia clínica completa (consultas, medicación, estudios) la ven los veterinarios.</p>}
+      {panel === 'subir' && (
+        <SubirPanel
+          m={m}
+          onClose={() => setPanel(null)}
+          onDone={(nombre) => {
+            setPanel(null);
+            showToast('Archivo subido', `${nombre}, en Estudios y fotos.`);
+          }}
+        />
+      )}
+      {visto && (
+        <Visor
+          m={m}
+          a={visto}
+          onClose={() => setVisto(null)}
+          onQuitar={() => {
+            removeAdjunto(m.id, visto.id);
+            showToast('Quitado de la historia clínica', visto.nombre);
+            setVisto(null);
+          }}
+        />
+      )}
+      {panel === 'cambios' && (
+        <Panel title="Cambios en la ficha" kicker={m.nombre} onClose={() => setPanel(null)}>
+          <Cambios m={m} />
+        </Panel>
       )}
       {panel === 'editar' && (
         <MascotaPanel
@@ -298,14 +363,19 @@ export function VetFicha() {
   );
 }
 
-function SectionHead({ titulo, boton, onClick }: { titulo: string; boton: string; onClick: () => void }) {
+/** Historial de cambios: quién cargó o modificó qué, y cuándo. */
+function Cambios({ m, cuantos }: { m: Mascota; cuantos?: number }) {
   return (
-    <div className="row-between">
-      <h2 className="display-s">{titulo}</h2>
-      <button type="button" className="btn btn--secundario btn--small" onClick={onClick}>
-        {boton}
-      </button>
-    </div>
+    <ol className="cambios__lista">
+      {m.cambios.slice(0, cuantos).map((c, i) => (
+        <li key={c.cuando + i}>
+          <p className="texto-chico">{c.texto}</p>
+          <p className="mono-dato suave">
+            {fechaCorta(c.cuando.slice(0, 10))} {c.cuando.slice(11)} · {c.por}
+          </p>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -346,57 +416,6 @@ function VacunaPanel({ m, duenio, hoy, onClose, onSave }: { m: Mascota; duenio: 
           <span>Avisarle a {duenio.split(' ')[0]} antes de la próxima dosis</span>
         </label>
         <PanelActions submit="Guardar vacuna" onCancel={onClose} />
-      </form>
-    </Panel>
-  );
-}
-
-function IndicacionesPanel({ m, onClose, onAdd, onRemove }: { m: Mascota; onClose: () => void; onAdd: (x: Indicacion) => void; onRemove: (titulo: string) => void }) {
-  const [tipo, setTipo] = useState<Indicacion['tipo']>('alergia');
-  const [titulo, setTitulo] = useState('');
-  const [detalle, setDetalle] = useState('');
-
-  return (
-    <Panel title="Alergias y medicación" kicker={m.nombre} onClose={onClose}>
-      {m.indicaciones.length > 0 && (
-        <ul className="card card--blanco list">
-          {m.indicaciones.map((x) => (
-            <li key={x.titulo} className="list__row">
-              <div className="list__text">
-                <p className="texto-fuerte">{x.titulo}</p>
-                <p className="texto-chico suave">{x.detalle}</p>
-              </div>
-              <button type="button" className="link-button link-button--error mono-etiqueta" onClick={() => onRemove(x.titulo)}>
-                Quitar
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!titulo.trim()) return;
-          onAdd({ tipo, titulo: titulo.trim(), detalle: detalle.trim() || (tipo === 'alergia' ? 'Alergia: no recetar' : 'En curso') });
-          setTitulo('');
-          setDetalle('');
-        }}
-        noValidate
-      >
-        <fieldset className="group">
-          <legend className="mono-etiqueta">Agregar</legend>
-          <div className="chips">
-            <Chip pressed={tipo === 'alergia'} onClick={() => setTipo('alergia')}>
-              Alergia
-            </Chip>
-            <Chip pressed={tipo === 'medicacion'} onClick={() => setTipo('medicacion')}>
-              Medicación
-            </Chip>
-          </div>
-        </fieldset>
-        <Field label={tipo === 'alergia' ? 'Alérgica o alérgico a' : 'Medicamento'} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-        <Field label="Detalle" placeholder={tipo === 'alergia' ? 'Opcional' : 'Ej.: 1 comprimido cada 12 horas'} value={detalle} onChange={(e) => setDetalle(e.target.value)} />
-        <PanelActions submit="Agregar" onCancel={onClose} disabled={!titulo.trim()} />
       </form>
     </Panel>
   );
