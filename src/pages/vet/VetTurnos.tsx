@@ -322,7 +322,7 @@ export function VetTurnos() {
         <Modal title={`¿Cancelar el turno de ${mascota(panel.turno.mascotaId)?.nombre}?`} onClose={() => setPanel(null)}>
           <p className="suave">
             {diaSemanaLargo(panel.turno.fecha)} a las {panel.turno.hora}, con {profesional(panel.turno)}.
-            {panel.turno.sena ? ' La seña queda a favor del cliente para el próximo turno.' : ''} Si hay alguien en la lista de espera para ese día, te lo mostramos para avisarle.
+            {panel.turno.sena ? ' Tenía una seña pagada por la app.' : ''} Si hay alguien en la lista de espera para ese día, te lo mostramos para avisarle.
           </p>
           <div className="vet-modal__actions">
             <button

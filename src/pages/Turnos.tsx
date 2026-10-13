@@ -56,7 +56,7 @@ export function Turnos() {
                     aria-label={`Cancelar el turno de ${m.nombre} del ${diaSemanaLargo(t.fecha).toLowerCase()}`}
                     onClick={() => {
                       cancelarTurno(t.id);
-                      setCancelado(`${m.nombre}, ${diaSemanaLargo(t.fecha).toLowerCase()} a las ${t.hora}.${t.sena ? ' La seña te queda a favor para el próximo turno.' : ''}`);
+                      setCancelado(`${m.nombre}, ${diaSemanaLargo(t.fecha).toLowerCase()} a las ${t.hora}.${t.sena ? ' Por la seña que pagaste, consultá en la veterinaria.' : ''}`);
                     }}
                   >
                     Cancelar
