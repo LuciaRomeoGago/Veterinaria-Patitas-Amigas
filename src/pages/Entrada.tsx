@@ -10,7 +10,7 @@ import './pages.css';
 export function Bienvenida() {
   return (
     <Screen label="Bienvenida">
-      <img className="logo" src={img('logo-verde')} alt="Veterinaria Patitas amigas, Argentina" width={120} height={120} />
+      <img className="logo" src={img('logo-bosque')} alt="Veterinaria Patitas amigas, Argentina" width={120} height={120} />
       <h1 className="display-l">Hola, te damos la bienvenida</h1>
       <p className="suave">Entrá para ver a tus mascotas, comprar productos o administrar la veterinaria.</p>
       <Drawing especie="ambos" height={228} className="drawing--grow" />

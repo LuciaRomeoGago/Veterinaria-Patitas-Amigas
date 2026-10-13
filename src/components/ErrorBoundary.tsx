@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
   render() {
     if (!this.state.error) return this.props.children;
     return (
-      <main className="screen" style={{ maxWidth: 560, margin: '0 auto', background: 'var(--offwhite)', minHeight: '100vh' }}>
+      <main className="screen" style={{ maxWidth: 560, margin: '0 auto', background: 'var(--beige)', minHeight: '100vh' }}>
         <h1 className="display-l">Algo salió mal</h1>
         <p className="suave">No pudimos mostrar esta pantalla. Probá volver a los datos de ejemplo.</p>
         <pre className="mono-dato" style={{ whiteSpace: 'pre-wrap', color: 'var(--error)' }}>{String(this.state.error)}</pre>

@@ -6,13 +6,13 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  background: var(--offwhite);
+  background: var(--beige);
 }
 
-/* En pantallas grandes la app se ve como un celular apoyado sobre celeste. */
+/* En pantallas grandes la app se ve como un celular apoyado sobre salvia. */
 @media (min-width: 600px) {
   html body {
-    background: var(--celeste);
+    background: var(--salvia);
   }
 
   .app {
@@ -29,8 +29,8 @@
   height: auto;
   clip: auto;
   padding: 8px 12px;
-  background: var(--verde);
-  color: var(--offwhite);
+  background: var(--bosque);
+  color: var(--beige);
 }
 
 /* Figma: padding 64 / 24 / 32, separación 16–24 */
@@ -43,7 +43,7 @@
 }
 
 .screen--nav {
-  padding-bottom: 112px;
+  padding-bottom: calc(112px + env(safe-area-inset-bottom));
 }
 
 /* Espacio flexible: empuja lo que sigue hacia abajo. */
@@ -51,49 +51,91 @@
   flex: 1;
 }
 
+/*
+ * Menú principal del cliente: barra fija abajo, cuatro secciones con ícono y nombre.
+ * Cada opción ocupa un cuarto del ancho y mide 60 de alto (área táctil cómoda).
+ */
 .bottom-nav {
   position: fixed;
-  bottom: calc(24px + env(safe-area-inset-bottom));
+  bottom: 0;
   left: 50%;
   z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: min(calc(100% - 2 * var(--margen)), calc(var(--ancho-app) - 2 * var(--margen)));
-  padding: 8px;
-  border-radius: var(--radio-pildora);
-  background: var(--verde);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(100%, var(--ancho-app));
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  border-radius: var(--radio-grande) var(--radio-grande) 0 0;
+  background: var(--bosque);
   transform: translateX(-50%);
 }
 
 .bottom-nav__item {
   position: relative;
   z-index: 1;
-  padding: 10px 12px;
-  border-radius: var(--radio-pildora);
-  color: var(--offwhite);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 60px;
+  padding: 6px 4px;
+  border-radius: var(--radio-mediano);
+  color: var(--beige);
+  font-family: var(--texto);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
   text-decoration: none;
-  transition: color 0.3s var(--ease);
 }
 
-.bottom-nav__item[aria-current='page'] {
-  color: var(--verde);
+.bottom-nav__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 32px;
+  border-radius: var(--radio-pildora);
+  transition:
+    color 0.3s var(--ease),
+    background-color 0.2s var(--ease);
 }
 
-/* Píldora celeste que se desliza hasta la sección activa. */
+/* Solo con mouse: en el celular el hover queda "pegado" después de tocar. */
+@media (hover: hover) {
+  .bottom-nav__item:hover:not([aria-current]) .bottom-nav__icon {
+    background: rgb(143 163 130 / 0.22);
+  }
+}
+
+.bottom-nav__item[aria-current='page'] .bottom-nav__icon {
+  color: var(--bosque-oscuro);
+}
+
+.bottom-nav__item:focus-visible {
+  outline: 3px solid var(--salvia);
+  outline-offset: -3px;
+}
+
+/* Píldora salvia que se desliza hasta la sección activa, detrás de su ícono. */
 .bottom-nav__pill {
   position: absolute;
-  top: 8px;
-  bottom: 8px;
+  top: 14px;
   left: 0;
+  width: 64px;
+  height: 32px;
   border-radius: var(--radio-pildora);
-  background: var(--celeste);
+  background: var(--salvia);
 }
 
 .bottom-nav__pill.is-ready {
-  transition:
-    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1),
-    width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav__pill.is-ready,
+  .screen--from-right,
+  .screen--from-left {
+    transition: none;
+    animation: none;
+  }
 }
 
 /* La pantalla nueva entra desde el lado hacia el que se movió la barra. */
@@ -126,7 +168,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  background: rgb(46 42 8 / 0.5);
+  background: rgb(23 44 34 / 0.5);
   animation: sheet-fade 0.2s var(--ease);
 }
 
@@ -140,7 +182,7 @@
   overflow: auto;
   padding: 28px var(--margen) calc(32px + env(safe-area-inset-bottom));
   border-radius: var(--radio-grande) var(--radio-grande) 0 0;
-  background: var(--offwhite);
+  background: var(--beige);
   animation: sheet-up 0.28s var(--ease);
 }
 

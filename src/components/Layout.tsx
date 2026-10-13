@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useStore } from '../lib/store';
+import { Icon } from './icons';
 import './Layout.css';
 
 type NavId = 'inicio' | 'mascotas' | 'turnos' | 'tienda';
@@ -14,7 +15,7 @@ const ITEMS: { id: NavId; label: string; to: string }[] = [
 
 /*
  * La barra inferior vive en el Layout (no en cada pantalla) para que no se vuelva a montar
- * al navegar: así la píldora celeste puede deslizarse de una sección a otra, y la pantalla
+ * al navegar: así la píldora salvia puede deslizarse de una sección a otra, y la pantalla
  * nueva entra desde el lado hacia el que se movió la barra.
  */
 const NavCtx = createContext<{ set: (id: NavId | null) => void; dir: 'left' | 'right' | null }>({ set: () => {}, dir: null });
@@ -77,15 +78,15 @@ export function Screen({ children, nav, className = '', label }: ScreenProps) {
 
 function BottomNav({ active }: { active: NavId }) {
   const refs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const [pill, setPill] = useState<{ x: number; w: number } | null>(null);
+  const [pill, setPill] = useState<number | null>(null);
   const [ready, setReady] = useState(false);
   const index = ITEMS.findIndex((i) => i.id === active);
 
-  // La píldora se mide sobre el ítem activo y se mueve con transform (se ve deslizarse).
+  // La píldora va detrás del ícono activo y se mueve con transform (se ve deslizarse).
   useLayoutEffect(() => {
     const measure = () => {
       const el = refs.current[index];
-      if (el) setPill({ x: el.offsetLeft, w: el.offsetWidth });
+      if (el) setPill(el.offsetLeft + el.offsetWidth / 2 - PILL / 2);
     };
     measure();
     window.addEventListener('resize', measure);
@@ -95,12 +96,12 @@ function BottomNav({ active }: { active: NavId }) {
 
   // Sin animación en la primera medición, para que no entre "volando" desde la izquierda.
   useEffect(() => {
-    if (pill && !ready) requestAnimationFrame(() => setReady(true));
+    if (pill !== null && !ready) requestAnimationFrame(() => setReady(true));
   }, [pill, ready]);
 
   return (
-    <nav className="bottom-nav" aria-label="Secciones">
-      {pill && <span className={`bottom-nav__pill${ready ? ' is-ready' : ''}`} style={{ width: pill.w, transform: `translateX(${pill.x}px)` }} aria-hidden="true" />}
+    <nav className="bottom-nav" aria-label="Menú principal">
+      {pill !== null && <span className={`bottom-nav__pill${ready ? ' is-ready' : ''}`} style={{ transform: `translateX(${pill}px)` }} aria-hidden="true" />}
       {ITEMS.map((it, i) => (
         <Link
           key={it.id}
@@ -108,15 +109,21 @@ function BottomNav({ active }: { active: NavId }) {
             refs.current[i] = el;
           }}
           to={it.to}
-          className="bottom-nav__item mono-etiqueta"
+          className="bottom-nav__item"
           aria-current={it.id === active ? 'page' : undefined}
         >
+          <span className="bottom-nav__icon">
+            <Icon name={it.id} />
+          </span>
           {it.label}
         </Link>
       ))}
     </nav>
   );
 }
+
+/** Ancho de la píldora salvia (Figma: 64 × 32). */
+const PILL = 64;
 
 /** Sin cliente ingresado, las pantallas privadas vuelven al ingreso. */
 export function RequireClient({ children }: { children: ReactNode }) {
