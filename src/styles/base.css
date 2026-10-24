@@ -95,13 +95,6 @@ ol {
   line-height: 1;
 }
 
-.frase-s {
-  font-family: var(--frase);
-  font-size: 22px;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
 .texto-fuerte {
   font-weight: 600;
 }
@@ -116,7 +109,6 @@ ol {
 }
 
 .mono-etiqueta,
-.mono-boton,
 .mono-dato {
   font-family: var(--mono);
 }
@@ -126,14 +118,6 @@ ol {
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.mono-boton {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 

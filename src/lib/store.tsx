@@ -409,10 +409,10 @@ function useStoreValue() {
 
     /** Horarios libres para un motivo; sin vetId, con cualquiera (dice con quién). */
     const lugares = (fecha: string, motivo: Motivo, vetId?: number, excepto?: number) => {
-      const vets = vetId ? [vetId] : veterinarios.map((v) => v.id);
+      const vets = (vetId ? [vetId] : veterinarios.map((v) => v.id)).map((id) => ({ id, libres: libres(state.turnos, state.bloqueos, fecha, id, motivo, excepto) }));
       return HORARIOS.flatMap((hora) => {
-        const quien = vets.find((v) => libres(state.turnos, state.bloqueos, fecha, v, motivo, excepto).includes(hora));
-        return quien ? [{ hora, vetId: quien }] : [];
+        const quien = vets.find((v) => v.libres.includes(hora));
+        return quien ? [{ hora, vetId: quien.id }] : [];
       });
     };
 
@@ -508,11 +508,6 @@ function useStoreValue() {
       entradaStock: (productoId: number, cantidad: number, detalle?: string, vence?: string) => dispatch({ type: 'entradaStock', productoId, cantidad, detalle, vence, por: porVet }),
       ajustarStock: (productoId: number, nuevo: number, motivo: string) => dispatch({ type: 'ajustarStock', productoId, nuevo, motivo, por: porVet }),
       avisar: (avisos: { clienteId: number; titulo: string; fecha: string }[]) => dispatch({ type: 'avisar', avisos }),
-      agendar(data: { mascotaId: number; motivo: Motivo; fecha: string; hora: string; vetId: number }) {
-        const id = nextId(state.turnos);
-        dispatch({ type: 'pedirTurno', turno: { ...data, id, estado: 'pendiente' } });
-        return id;
-      },
       llego: (id: number) => dispatch({ type: 'estadoTurno', id, estado: 'en_espera', llegada: horaActual() }),
       pasarAConsulta: (id: number) => dispatch({ type: 'estadoTurno', id, estado: 'en_consulta' }),
       atender: (consulta: Consulta) => dispatch({ type: 'atender', consulta, por: porVet }),

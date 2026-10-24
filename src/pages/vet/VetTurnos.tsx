@@ -3,20 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Chip, Field, Notice, Tag, Toggle } from '../../components/ui';
 import { Modal, Panel, PanelActions, RowActions, Table, VetHead, VetScreen, useToast, type RowAction } from '../../components/vet';
 import type { Bloqueo, Motivo, Turno } from '../../data/types';
-import { DURACION, ESTADOS, MANIANA, MOTIVOS, TARDE, aMin, bloqueoDe, duracionTexto, horaFin, libres, textoBloqueo, todoElDia } from '../../lib/agenda';
-import { addDays, diaSemanaCorto, diaSemanaLargo, fromIso, nextWorkdays, nombreDia, numeroDia } from '../../lib/dates';
+import { DURACION, ESTADOS, HORARIOS, MANIANA, MOTIVOS, TARDE, aHora, aMin, bloqueoDe, duracionTexto, horaFin, libres, textoBloqueo, todoElDia } from '../../lib/agenda';
+import { addDays, diaSemanaCorto, diaSemanaLargo, fechaLarga, fechaTitulo, fromIso, nextWorkdays, nombreDia, numeroDia } from '../../lib/dates';
 import { plural } from '../../lib/format';
 import { horaActual, useStore } from '../../lib/store';
 import { FIRMA, primerNombre, waLink } from '../../lib/whatsapp';
 import { Atender } from './Atender';
 import { Horarios } from '../../components/Horarios';
-
-const DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const fechaTitulo = (iso: string) => {
-  const d = fromIso(iso);
-  return `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
-};
 
 /** Los próximos días de atención: hoy (si es hábil) y los siguientes días hábiles. */
 function diasDeAgenda(hoy: string) {
@@ -80,7 +73,7 @@ export function VetTurnos() {
 
   const nombresVencidas = vencidas.map((v) => `${v.mascota.nombre} (${v.vacuna.nombre.toLowerCase()})`);
   const listaVencidas = nombresVencidas.length > 1 ? nombresVencidas.slice(0, -1).join(', ') + ' y ' + nombresVencidas[nombresVencidas.length - 1] : nombresVencidas[0];
-  const rango = `${numeroDia(semana[0])} al ${numeroDia(semana[4])} de ${MESES[fromIso(semana[4]).getMonth()]}`;
+  const rango = `${numeroDia(semana[0])} al ${fechaLarga(semana[4])}`;
   const turnosSemana = semana.reduce((n, d) => n + turnosDel(d, vetSemana).length, 0);
 
   const recordatorio = (t: Turno) => {
@@ -253,6 +246,7 @@ export function VetTurnos() {
         <Semana
           dias={semana}
           vetId={vetSemana}
+          ahora={ahora}
           onTurno={(t) => (t.estado === 'atendido' || !puede('atender') ? navigate(`/vet/mascotas/${t.mascotaId}`) : setPanel({ tipo: 'atender', turno: t }))}
           onLibre={(fecha, hora) => setPanel({ tipo: 'nuevo', fecha, hora, vetId: vetSemana })}
           onBloqueo={(b) => setPanel({ tipo: 'quitar', bloqueo: b })}
@@ -497,10 +491,9 @@ const filaDe = (hora: string) => {
  * Agenda de la semana de un veterinario: una columna por día y una fila cada 30 minutos.
  * Cada turno ocupa lo que dura. En el celular, los días se apilan uno debajo del otro.
  */
-function Semana({ dias, vetId, onTurno, onLibre, onBloqueo }: { dias: string[]; vetId: number; onTurno: (t: Turno) => void; onLibre: (fecha: string, hora: string) => void; onBloqueo: (b: Bloqueo) => void }) {
+function Semana({ dias, vetId, ahora, onTurno, onLibre, onBloqueo }: { dias: string[]; vetId: number; ahora: string; onTurno: (t: Turno) => void; onLibre: (fecha: string, hora: string) => void; onBloqueo: (b: Bloqueo) => void }) {
   const { hoy, turnosDel, mascota, bloqueos } = useStore();
-  const ahora = useReloj();
-  const horas = [...MANIANA, ...TARDE];
+  const horas = HORARIOS;
 
   return (
     <div className="semana" role="grid" aria-label="Agenda de la semana">
@@ -589,7 +582,7 @@ function Semana({ dias, vetId, onTurno, onLibre, onBloqueo }: { dias: string[]; 
 
 /** Agendar desde la veterinaria: con quién, motivo (con su duración), día y horario libre. */
 function NuevoTurno({ dias, inicial, onClose, onDone }: { dias: string[]; inicial: { fecha?: string; hora?: string; vetId?: number; mascotaId?: number; motivo?: Motivo; esperaId?: number }; onClose: () => void; onDone: (dia: string, texto: string) => void }) {
-  const { state, veterinarios, duenio, agendar, nombreVet, removeEspera } = useStore();
+  const { state, veterinarios, duenio, pedirTurno, nombreVet, removeEspera } = useStore();
   const [mascotaId, setMascotaId] = useState(inicial.mascotaId ?? state.mascotas[0]?.id);
   const [vetId, setVetId] = useState(inicial.vetId ?? veterinarios[0].id);
   const [motivo, setMotivo] = useState<Motivo>(inicial.motivo ?? 'Control');
@@ -602,7 +595,7 @@ function NuevoTurno({ dias, inicial, onClose, onDone }: { dias: string[]; inicia
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!mascotaId || !horaValida) return;
-    agendar({ mascotaId, motivo, fecha, hora: horaValida, vetId });
+    pedirTurno({ mascotaId, motivo, fecha, hora: horaValida, vetId });
     if (inicial.esperaId) removeEspera(inicial.esperaId);
     const m = state.mascotas.find((x) => x.id === mascotaId)!;
     onDone(fecha, `${m.nombre}, ${diaSemanaCorto(fecha)} de ${horaValida} a ${horaFin(horaValida, motivo)} con ${nombreVet(vetId)}.`);
@@ -670,7 +663,7 @@ function BloquearPanel({ fechaInicial, vetInicial, onClose, onDone }: { fechaIni
   const [hasta, setHasta] = useState('19:00');
   const [motivo, setMotivo] = useState('');
   const [enviado, setEnviado] = useState(false);
-  const horas = Array.from({ length: 25 }, (_, i) => `${String(8 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`);
+  const horas = Array.from({ length: 25 }, (_, i) => aHora(480 + i * 30));
   const errores = {
     fecha: !fecha || fecha < hoy ? 'Elegí hoy o un día que venga.' : undefined,
     hasta: !diaEntero && hasta <= desde ? 'Tiene que ser después de “desde”.' : undefined,

@@ -4,6 +4,7 @@ import { Field } from '../../components/ui';
 import { Modal, Panel, PanelActions, RowActions, Table, VetHead, VetScreen, useToast } from '../../components/vet';
 import type { Cliente } from '../../data/types';
 import { plural } from '../../lib/format';
+import { normalizar } from '../../lib/historia';
 import { useStore } from '../../lib/store';
 
 const dniFmt = (dni: string) => dni.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -18,11 +19,10 @@ export function VetClientes() {
   const [toast, showToast] = useToast();
 
   // Busca por nombre, DNI o nombre de una de sus mascotas.
-  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-  const filtro = norm(q.trim());
+  const filtro = normalizar(q.trim());
   const digitos = filtro.replace(/\D/g, '');
   const lista = clientes.filter(
-    (c) => !filtro || norm(c.nombre).includes(filtro) || (digitos !== '' && c.dni.includes(digitos)) || mascotasDe(c.id).some((m) => norm(m.nombre).includes(filtro)),
+    (c) => !filtro || normalizar(c.nombre).includes(filtro) || (digitos !== '' && c.dni.includes(digitos)) || mascotasDe(c.id).some((m) => normalizar(m.nombre).includes(filtro)),
   );
 
   return (

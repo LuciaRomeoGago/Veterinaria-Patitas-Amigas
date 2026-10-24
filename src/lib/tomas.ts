@@ -30,6 +30,3 @@ export function progreso(plan: PlanTomas, ahora: string) {
   const dia = Math.min(plan.dias, daysBetween(plan.inicio, ahora.slice(0, 10)) + 1);
   return { total: todas.length, tocaban: hasta.length, dadas, dia, terminado: todas.every((t) => t <= ahora) && todas.length > 0, ultimo: todas[todas.length - 1] };
 }
-
-/** "cada 12 horas, 7 días" */
-export const textoPlan = (plan: Pick<PlanTomas, 'cadaHoras' | 'dias'>) => `${plan.cadaHoras === 24 ? 'una vez por día' : `cada ${plan.cadaHoras} horas`}, ${plan.dias} ${plan.dias === 1 ? 'día' : 'días'}`;

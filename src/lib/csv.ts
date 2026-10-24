@@ -5,7 +5,12 @@ export function descargarCsv(nombre: string, filas: (string | number | undefined
     return /[;"\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t;
   };
   const texto = '﻿' + filas.map((f) => f.map(celda).join(';')).join('\r\n');
-  const url = URL.createObjectURL(new Blob([texto], { type: 'text/csv;charset=utf-8' }));
+  descargar(nombre, new Blob([texto], { type: 'text/csv;charset=utf-8' }));
+}
+
+/** Descarga un archivo armado en el navegador. */
+export function descargar(nombre: string, blob: Blob) {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = nombre;

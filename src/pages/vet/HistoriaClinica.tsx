@@ -35,7 +35,8 @@ export function HistoriaClinica({ m, onAgregar, onEditar, onQuitar, onVacuna, on
   const [filtro, setFiltro] = useState<Filtro>('todo');
   const q = texto.trim();
 
-  const registros = (tipo: TipoRegistro) => m.registros.filter((r) => r.tipo === tipo && coincide(q, r.titulo, r.detalle));
+  const encontrados = m.registros.filter((r) => coincide(q, r.titulo, r.detalle));
+  const porTipo = Object.fromEntries(PARTES.map((p) => [p.tipo, encontrados.filter((r) => r.tipo === p.tipo)])) as Record<TipoRegistro, Registro[]>;
   const vacunas = m.vacunas.filter((v) => coincide(q, v.nombre));
   const consultas = limitado ? [] : m.historial.filter((h) => coincide(q, h.titulo, h.detalle));
   const estudios = limitado ? [] : m.adjuntos.filter((a) => coincide(q, a.nombre, a.nota));
@@ -43,11 +44,11 @@ export function HistoriaClinica({ m, onAgregar, onEditar, onQuitar, onVacuna, on
 
   const cuenta: Record<Filtro, number> = {
     todo: 0,
-    alergia: registros('alergia').length,
-    medicacion: registros('medicacion').length,
-    enfermedad: registros('enfermedad').length,
-    bien: registros('bien').length,
-    mal: registros('mal').length,
+    alergia: porTipo.alergia.length,
+    medicacion: porTipo.medicacion.length,
+    enfermedad: porTipo.enfermedad.length,
+    bien: porTipo.bien.length,
+    mal: porTipo.mal.length,
     vacunas: vacunas.length,
     consultas: consultas.length,
     estudios: estudios.length,
@@ -96,8 +97,8 @@ export function HistoriaClinica({ m, onAgregar, onEditar, onQuitar, onVacuna, on
       ) : (
         <div className="hc__grid">
           {partes.filter((p) => ver(p.tipo)).map((p) => (
-            <Parte key={p.tipo} titulo={p.titulo} cantidad={registros(p.tipo).length} boton={limitado ? undefined : 'Agregar'} onBoton={() => onAgregar(p.tipo)} vacio={p.vacio} alerta={p.tipo === 'alergia'}>
-              {registros(p.tipo).map((r) => {
+            <Parte key={p.tipo} titulo={p.titulo} cantidad={porTipo[p.tipo].length} boton={limitado ? undefined : 'Agregar'} onBoton={() => onAgregar(p.tipo)} vacio={p.vacio} alerta={p.tipo === 'alergia'}>
+              {porTipo[p.tipo].map((r) => {
                 const e = estado(r);
                 const pr = r.plan && r.vigente ? progreso(r.plan, ahora()) : null;
                 return (

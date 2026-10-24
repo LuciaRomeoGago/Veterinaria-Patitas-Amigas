@@ -1,11 +1,5 @@
 import type { Pesaje } from '../data/types';
-import { fechaCorta, fromIso } from '../lib/dates';
-
-const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-const mesAnio = (iso: string) => {
-  const d = fromIso(iso);
-  return `${MESES[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
-};
+import { fechaCorta, fromIso, mesAnio } from '../lib/dates';
 const kg = (n: number) => `${n.toLocaleString('es-AR', { maximumFractionDigits: 1 })} kg`;
 
 /**
@@ -26,9 +20,11 @@ export function PesoChart({ pesos }: { pesos: Pesaje[] }) {
   const t0 = t(pesos[0].fecha);
   const t1 = t(pesos[pesos.length - 1].fecha);
   const valores = pesos.map((p) => p.kg);
-  const margen = Math.max(0.3, (Math.max(...valores) - Math.min(...valores)) * 0.15);
-  const lo = Math.min(...valores) - margen;
-  const hi = Math.max(...valores) + margen;
+  const max = Math.max(...valores);
+  const min = Math.min(...valores);
+  const margen = Math.max(0.3, (max - min) * 0.15);
+  const lo = min - margen;
+  const hi = max + margen;
   const X = (iso: string) => L + ((t(iso) - t0) / (t1 - t0 || 1)) * (W - L - R);
   const Y = (v: number) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
   const linea = pesos.map((p, i) => `${i ? 'L' : 'M'}${X(p.fecha).toFixed(1)} ${Y(p.kg).toFixed(1)}`).join(' ');
@@ -39,8 +35,6 @@ export function PesoChart({ pesos }: { pesos: Pesaje[] }) {
     dif === 0
       ? `Mantiene el peso desde ${mesAnio(primero.fecha)}: ${kg(ultimo.kg)}.`
       : `${dif > 0 ? 'Subió' : 'Bajó'} ${kg(Math.abs(dif))} desde ${mesAnio(primero.fecha)}. Último pesaje: ${kg(ultimo.kg)}.`;
-  const max = Math.max(...valores);
-  const min = Math.min(...valores);
 
   return (
     <figure className="peso">

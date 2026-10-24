@@ -2,14 +2,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Back, Notice, Toggle } from '../components/ui';
 import { tomasDelDia } from '../lib/tomas';
 import { Screen } from '../components/Layout';
-import { cuanto, daysBetween, diaMes, diaSemanaCorto, diaSemanaLargo, fromIso, today } from '../lib/dates';
+import { cuanto, daysBetween, diaMes, diaSemanaCorto, diaSemanaLargo, fechaLarga, today } from '../lib/dates';
 import { downloadIcs } from '../lib/ics';
 import { plural } from '../lib/format';
 import { useStore } from '../lib/store';
 import './pages.css';
-
-const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const fechaLarga = (iso: string) => `${fromIso(iso).getDate()} de ${MESES[fromIso(iso).getMonth()]}`;
 
 /** 04 · Cliente · Inicio: aviso, próximo turno y atajos. */
 export function Inicio() {

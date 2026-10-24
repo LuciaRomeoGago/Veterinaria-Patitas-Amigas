@@ -222,13 +222,16 @@ export function PedirTurno() {
       <fieldset className="group">
         <legend className="mono-etiqueta">{nombreMes(fecha)}</legend>
         <div className="days">
-          {dias.map((d) => (
-            <button key={d} type="button" className={`day${lleno(d) ? ' day--lleno' : ''}`} aria-pressed={d === fecha} onClick={() => setFecha(d)} aria-label={lleno(d) ? `${diaSemanaLargo(d)}, completo` : diaSemanaLargo(d)}>
-              <span className="mono-etiqueta">{nombreDia(d)}</span>
-              <span className="display-s">{numeroDia(d)}</span>
-              {lleno(d) && <span className="day__lleno mono-etiqueta">Lleno</span>}
-            </button>
-          ))}
+          {dias.map((d) => {
+            const sinLugar = lleno(d);
+            return (
+              <button key={d} type="button" className={`day${sinLugar ? ' day--lleno' : ''}`} aria-pressed={d === fecha} onClick={() => setFecha(d)} aria-label={sinLugar ? `${diaSemanaLargo(d)}, completo` : diaSemanaLargo(d)}>
+                <span className="mono-etiqueta">{nombreDia(d)}</span>
+                <span className="display-s">{numeroDia(d)}</span>
+                {sinLugar && <span className="day__lleno mono-etiqueta">Lleno</span>}
+              </button>
+            );
+          })}
         </div>
       </fieldset>
 

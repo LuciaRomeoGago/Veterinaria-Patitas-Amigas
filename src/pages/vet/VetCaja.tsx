@@ -2,16 +2,12 @@ import { useState, type FormEvent } from 'react';
 import { Chip, Field, Notice, Tag } from '../../components/ui';
 import { Modal, Panel, PanelActions, RowActions, Table, VetHead, VetScreen, useToast } from '../../components/vet';
 import type { Compra, Medio, Movimiento } from '../../data/types';
-import { fromIso } from '../../lib/dates';
+import { fechaTitulo } from '../../lib/dates';
 import { plural, precio } from '../../lib/format';
 import { useStore } from '../../lib/store';
 import { MEDIOS } from './Atender';
 
-const DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const fechaTitulo = (iso: string) => `${DIAS[fromIso(iso).getDay()]} ${fromIso(iso).getDate()} de ${MESES[fromIso(iso).getMonth()]}`;
-
-const TIPOS: Record<Movimiento['tipo'], string> = { consulta: 'Consulta', venta: 'Venta', sena: 'Seña', fondo: 'Fondo', ingreso: 'Ingreso', egreso: 'Gasto' };
+export const TIPOS: Record<Movimiento['tipo'], string> = { consulta: 'Consulta', venta: 'Venta', sena: 'Seña', fondo: 'Fondo', ingreso: 'Ingreso', egreso: 'Gasto' };
 const signo = (m: Movimiento) => (m.tipo === 'egreso' ? -1 : 1);
 
 /**

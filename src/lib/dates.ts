@@ -65,6 +65,15 @@ export const diaSemanaCorto = (iso: string) => `${DIAS[fromIso(iso).getDay()]} $
 /** Martes 14/10 */
 export const diaSemanaLargo = (iso: string) => `${DIAS_LARGOS[fromIso(iso).getDay()]} ${diaMes(iso)}`;
 
+/** 14 de octubre */
+export const fechaLarga = (iso: string) => `${fromIso(iso).getDate()} de ${MESES[fromIso(iso).getMonth()]}`;
+
+/** Martes 14 de octubre */
+export const fechaTitulo = (iso: string) => `${DIAS_LARGOS[fromIso(iso).getDay()]} ${fechaLarga(iso)}`;
+
+/** oct 26 */
+export const mesAnio = (iso: string) => `${MESES[fromIso(iso).getMonth()].slice(0, 3)} ${String(fromIso(iso).getFullYear()).slice(2)}`;
+
 export const nombreDia = (iso: string) => DIAS[fromIso(iso).getDay()];
 export const numeroDia = (iso: string) => String(fromIso(iso).getDate());
 export const nombreMes = (iso: string) => {

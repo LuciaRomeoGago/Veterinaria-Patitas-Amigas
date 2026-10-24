@@ -5,6 +5,7 @@ import { addDays, cuanto, daysBetween, diaMes, fechaCorta, fromIso } from '../..
 import { plural, precio, stockBajo } from '../../lib/format';
 import { useStore } from '../../lib/store';
 import { descargarCsv } from '../../lib/csv';
+import { TIPOS } from './VetCaja';
 
 /** Lunes de la semana de una fecha. */
 function lunes(iso: string) {
@@ -76,7 +77,7 @@ export function VetResumen() {
       [],
       ['Caja (cobros y gastos registrados)'],
       ['Fecha', 'Hora', 'Tipo', 'Concepto', 'Medio', 'Monto ($)'],
-      ...caja.map((m) => [fechaCorta(m.fecha), m.hora, { consulta: 'Consulta', venta: 'Venta', sena: 'Seña', fondo: 'Fondo', ingreso: 'Ingreso', egreso: 'Gasto' }[m.tipo], m.concepto, m.medio, m.tipo === 'egreso' ? -m.monto : m.monto]),
+      ...caja.map((m) => [fechaCorta(m.fecha), m.hora, TIPOS[m.tipo], m.concepto, m.medio, m.tipo === 'egreso' ? -m.monto : m.monto]),
       [],
       ['Vacunas por vencer en 30 días'],
       ['Mascota', 'Dueña o dueño', 'Vacuna', 'Vence'],

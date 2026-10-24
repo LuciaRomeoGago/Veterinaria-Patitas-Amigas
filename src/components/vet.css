@@ -551,8 +551,7 @@
     background: none;
   }
 
-  .vet-table,
-  .vet-ficha__detail .vet-table {
+  .vet-table {
     min-width: 0;
   }
 
@@ -686,10 +685,6 @@
 
 .vet-ficha__pet a {
   text-decoration: none;
-}
-
-.vet-ficha__detail .vet-table {
-  min-width: 520px;
 }
 
 @media (min-width: 1101px) {
